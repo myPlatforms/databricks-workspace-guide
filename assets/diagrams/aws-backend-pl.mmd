@@ -1,0 +1,38 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FF3621', 'primaryTextColor': '#fff', 'lineColor': '#333'}}}%%
+graph TB
+    subgraph CP["Control Plane (Databricks Managed)"]
+        direction TB
+        WEB["Web App / REST API"]
+        SCC["SCC Relay"]
+        UC["Unity Catalog"]
+    end
+
+    subgraph CUST["Customer AWS Account"]
+        subgraph VPC["Customer VPC"]
+            direction TB
+            subgraph COMPUTE["Compute Subnets"]
+                SPARK["Spark Clusters"]
+            end
+            subgraph EPSUBNET["Endpoints Subnet"]
+                RESTEP["REST API<br/>VPC Endpoint"]
+                SCCEP["SCC Relay<br/>VPC Endpoint"]
+            end
+            S3GW["S3 Gateway Endpoint"]
+        end
+        S3["Amazon S3"]
+    end
+
+    SPARK -->|"Private Link"| RESTEP
+    SPARK -->|"Private Link"| SCCEP
+    RESTEP -->|"AWS PrivateLink"| WEB
+    SCCEP -->|"AWS PrivateLink"| SCC
+    SPARK --> S3GW
+    S3GW --> S3
+
+    classDef controlPlane fill:#1B3139,stroke:#333,color:#fff
+    classDef endpoint fill:#FF3621,stroke:#333,color:#fff
+    classDef service fill:#FF9900,stroke:#333,color:#000
+
+    class CP controlPlane
+    class RESTEP,SCCEP endpoint
+    class S3,S3GW service

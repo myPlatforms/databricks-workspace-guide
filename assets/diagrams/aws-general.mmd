@@ -1,0 +1,46 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FF3621', 'primaryTextColor': '#fff', 'lineColor': '#333'}}}%%
+graph TB
+    subgraph CP["Control Plane (Databricks Managed)"]
+        direction TB
+        WEB["Web App / REST API"]
+        CM["Cluster Manager"]
+        REPO["Notebook & Jobs Store"]
+        UC["Unity Catalog"]
+    end
+
+    subgraph CUST["Customer AWS Account"]
+        subgraph VPC["Customer VPC"]
+            direction TB
+            subgraph AZ1["AZ-1"]
+                SUB1["Private Subnet 1"]
+                SPARK1["Spark Clusters"]
+            end
+            subgraph AZ2["AZ-2"]
+                SUB2["Private Subnet 2"]
+                SPARK2["Spark Clusters"]
+            end
+            NAT["NAT Gateway"]
+            IGW["Internet Gateway"]
+            S3GW["S3 Gateway Endpoint"]
+        end
+        S3["Amazon S3<br/>(DBFS / Default Storage)"]
+    end
+
+    WEB <-->|"HTTPS/443"| SPARK1
+    WEB <-->|"HTTPS/443"| SPARK2
+    SPARK1 --> S3GW
+    SPARK2 --> S3GW
+    S3GW --> S3
+    SPARK1 --> NAT
+    SPARK2 --> NAT
+    NAT --> IGW
+
+    classDef controlPlane fill:#1B3139,stroke:#333,color:#fff
+    classDef customerVPC fill:#232F3E,stroke:#FF9900,color:#fff
+    classDef subnet fill:#3B4853,stroke:#FF9900,color:#fff
+    classDef service fill:#FF9900,stroke:#333,color:#000
+
+    class CP controlPlane
+    class VPC customerVPC
+    class AZ1,AZ2 subnet
+    class S3,NAT,IGW,S3GW service

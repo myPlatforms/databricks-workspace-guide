@@ -1,0 +1,15 @@
+{
+  "name": "databricks-workspace-guide",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "description": "Databricks Workspace 구성 가이드 - reveal.js 프레젠테이션",
+  "dependencies": {
+    "reveal.js": "^5.2.1",
+    "vite": "^7.3.1"
+  }
+}

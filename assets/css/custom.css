@@ -1,0 +1,228 @@
+/* Databricks Workspace Guide - Custom Styles */
+
+:root {
+  --db-red: #FF3621;
+  --db-dark: #1B3139;
+  --db-gray: #2D3B41;
+  --db-light: #F5F5F5;
+  --db-blue: #00A972;
+  --aws-orange: #FF9900;
+  --azure-blue: #0078D4;
+}
+
+/* Section title slides */
+.reveal .slide-background.aws-section {
+  background: linear-gradient(135deg, var(--db-dark) 0%, #232F3E 100%);
+}
+
+.reveal .slide-background.azure-section {
+  background: linear-gradient(135deg, var(--db-dark) 0%, #0078D4 100%);
+}
+
+/* CSP badges */
+.csp-badge {
+  display: inline-block;
+  padding: 4px 16px;
+  border-radius: 4px;
+  font-size: 0.7em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.csp-badge.aws {
+  background: var(--aws-orange);
+  color: #000;
+}
+
+.csp-badge.azure {
+  background: var(--azure-blue);
+  color: #fff;
+}
+
+/* Architecture diagrams */
+.architecture-diagram {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Step indicators */
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--db-red);
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.8em;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* Screenshot placeholders */
+.screenshot-placeholder {
+  background: #e8e8e8;
+  border: 2px dashed #999;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.screenshot-placeholder .placeholder-label {
+  font-size: 0.7em;
+  margin-top: 8px;
+  color: #999;
+}
+
+/* Screenshot images */
+.screenshot {
+  max-width: 85%;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Table styling */
+.reveal table {
+  font-size: 0.65em;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.reveal table th {
+  background: var(--db-dark);
+  color: #fff;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.reveal table td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.reveal table tr:nth-child(even) td {
+  background: #f8f8f8;
+}
+
+/* Code blocks */
+.reveal pre code {
+  font-size: 0.75em;
+  line-height: 1.4;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+/* Two-column layout */
+.columns {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.columns .col {
+  flex: 1;
+}
+
+/* Option comparison boxes */
+.option-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--db-red);
+}
+
+.option-box.option-1 {
+  border-left-color: var(--db-blue);
+}
+
+.option-box.option-2 {
+  border-left-color: var(--aws-orange);
+}
+
+/* Navigation menu on title slide */
+.nav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.nav-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: left;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+
+.nav-card:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-card h4 {
+  margin: 0 0 4px 0;
+  font-size: 0.8em;
+}
+
+.nav-card p {
+  margin: 0;
+  font-size: 0.55em;
+  opacity: 0.8;
+}
+
+/* Highlight boxes */
+.highlight-box {
+  background: rgba(255, 54, 33, 0.1);
+  border-left: 4px solid var(--db-red);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 12px 0;
+  text-align: left;
+  font-size: 0.75em;
+}
+
+.highlight-box.info {
+  background: rgba(0, 169, 114, 0.1);
+  border-left-color: var(--db-blue);
+}
+
+.highlight-box.warning {
+  background: rgba(255, 153, 0, 0.15);
+  border-left-color: var(--aws-orange);
+}
+
+/* Smaller text utility */
+.small { font-size: 0.7em; }
+.smaller { font-size: 0.6em; }
+.tiny { font-size: 0.5em; }
+
+/* Left-aligned content */
+.left-aligned {
+  text-align: left;
+}
+
+.left-aligned h3 {
+  text-align: left;
+}
+
+/* Vertical slides separator */
+.section-divider {
+  border-top: 3px solid var(--db-red);
+  width: 100px;
+  margin: 20px auto;
+}

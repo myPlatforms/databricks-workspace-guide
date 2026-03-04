@@ -1,0 +1,35 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#0078D4', 'primaryTextColor': '#fff', 'lineColor': '#333'}}}%%
+graph TB
+    subgraph CP["Control Plane (Databricks Managed)"]
+        WEB["Web App / REST API"]
+        AUTH["Browser Authentication"]
+    end
+
+    subgraph CUST["Customer Azure Subscription"]
+        subgraph VNET["Customer VNet"]
+            PUBSUB["Public Subnet"]
+            PRIVSUB["Private Subnet"]
+            subgraph PESUB["PE Subnet"]
+                PE1["Private Endpoint<br/>databricks_ui_api"]
+                PE2["Private Endpoint<br/>browser_authentication"]
+            end
+        end
+        DNS["Private DNS Zone<br/>privatelink.azuredatabricks.net"]
+        ADLS["ADLS Gen2"]
+    end
+
+    PUBSUB -->|"Private Link"| PE1
+    PRIVSUB -->|"Private Link"| PE1
+    PE1 -->|"Azure PrivateLink"| WEB
+    PE2 -->|"Azure PrivateLink"| AUTH
+    DNS -.-|"DNS Resolution"| PE1
+    DNS -.-|"DNS Resolution"| PE2
+    PRIVSUB --> ADLS
+
+    classDef controlPlane fill:#1B3139,stroke:#333,color:#fff
+    classDef endpoint fill:#FF3621,stroke:#333,color:#fff
+    classDef dns fill:#00A36C,stroke:#333,color:#fff
+
+    class CP controlPlane
+    class PE1,PE2 endpoint
+    class DNS dns

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Databricks Workspace 구성 가이드</title>
+  <link rel="stylesheet" href="node_modules/reveal.js/dist/reveal.css" />
+  <link rel="stylesheet" href="node_modules/reveal.js/dist/theme/white.css" />
+  <link rel="stylesheet" href="node_modules/reveal.js/plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================ -->
+      <!-- TITLE & NAVIGATION -->
+      <!-- ============================================================ -->
+      <section>
+        <section data-background-color="#1B3139">
+          <h2 style="color: #fff;">Databricks Workspace<br/>구성 가이드</h2>
+          <p style="color: #ccc; font-size: 0.7em;">AWS &amp; Azure | 일반 &middot; Backend Private Link &middot; Frontend Private Link</p>
+          <div class="section-divider" style="border-color: #FF3621;"></div>
+          <p class="tiny" style="color: #888;">화살표 키 또는 스페이스바로 네비게이션 &middot; ESC로 전체 슬라이드 보기</p>
+        </section>
+
+        <section>
+          <h3>목차</h3>
+          <div class="nav-grid">
+            <div class="nav-card" style="border-left: 3px solid #FF9900;">
+              <h4><span class="csp-badge aws">AWS</span> 일반 구성</h4>
+              <p>VPC, IAM, S3, Workspace 생성</p>
+            </div>
+            <div class="nav-card" style="border-left: 3px solid #0078D4;">
+              <h4><span class="csp-badge azure">Azure</span> 일반 구성</h4>
+              <p>VNet, NSG, Storage, Workspace 배포</p>
+            </div>
+            <div class="nav-card" style="border-left: 3px solid #FF9900;">
+              <h4><span class="csp-badge aws">AWS</span> Backend Private Link</h4>
+              <p>Compute → Control Plane 전용 연결</p>
+            </div>
+            <div class="nav-card" style="border-left: 3px solid #0078D4;">
+              <h4><span class="csp-badge azure">Azure</span> Backend Private Link</h4>
+              <p>Data Plane → Control Plane Private Endpoint</p>
+            </div>
+            <div class="nav-card" style="border-left: 3px solid #FF9900;">
+              <h4><span class="csp-badge aws">AWS</span> Frontend Private Link</h4>
+              <p>사용자 → Workspace 전용 연결 (Transit VPC)</p>
+            </div>
+            <div class="nav-card" style="border-left: 3px solid #0078D4;">
+              <h4><span class="csp-badge azure">Azure</span> Frontend Private Link</h4>
+              <p>사용자 → Workspace Private Endpoint 접속</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Databricks 플랫폼 아키텍처 개요</h3>
+          <div class="columns">
+            <div class="col">
+              <div class="highlight-box info">
+                <strong>Control Plane</strong> (Databricks 관리)
+                <ul class="small">
+                  <li>Web Application / REST API</li>
+                  <li>Cluster Management</li>
+                  <li>Notebook / Jobs 저장소</li>
+                  <li>Unity Catalog Metastore</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col">
+              <div class="highlight-box">
+                <strong>Compute Plane</strong> (고객 환경)
+                <ul class="small">
+                  <li>Spark Clusters (EC2 / VMs)</li>
+                  <li>고객 VPC / VNet 내 실행</li>
+                  <li>데이터 저장소 (S3 / ADLS) 접근</li>
+                  <li>Serverless Compute (Databricks 관리)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p class="tiny" style="margin-top: 20px; color: #888;">Control Plane은 Databricks가 관리하며, Compute Plane은 고객 클라우드 계정에서 실행됩니다</p>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- AWS GENERAL WORKSPACE -->
+      <!-- ============================================================ -->
+      <section>
+        <section data-background-color="#232F3E">
+          <span class="csp-badge aws" style="font-size: 0.9em;">AWS</span>
+          <h2 style="color: #fff; margin-top: 16px;">일반 워크스페이스 구성</h2>
+          <p style="color: #ccc; font-size: 0.65em;">VPC &middot; IAM &middot; S3 &middot; Workspace 생성</p>
+        </section>
+
+        <section>
+          <h3><span class="csp-badge aws">AWS</span> 배포 아키텍처</h3>
+          <div class="architecture-diagram">
+            <img src="assets/images/aws/aws-general-architecture.png" alt="AWS Databricks General Architecture"
+                 class="screenshot"
+                 onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>AWS Databricks 배포 아키텍처</p><p class=\'placeholder-label\'>Control Plane ↔ Compute Plane (Customer VPC) ↔ S3</p></div>'" />
+          </div>
+          <aside class="notes">
+            Databricks 워크스페이스는 Control Plane(Databricks 관리)과 Compute Plane(고객 VPC)으로 구성됩니다.
+            Account Console 또는 Terraform을 통해 생성할 수 있습니다.
+          </aside>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">0</span> 사전 준비 사항</h3>
+          <table>
+            <thead>
+              <tr><th>항목</th><th>요구사항</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Databricks Account</td><td>Enterprise Platform Tier 이상</td></tr>
+              <tr><td>Account Admin 권한</td><td>Account Console 접속 가능</td></tr>
+              <tr><td>AWS 권한</td><td>VPC, Security Group, Subnet 관리</td></tr>
+              <tr><td>AWS 권한</td><td>S3 Bucket 생성 및 정책 수정</td></tr>
+              <tr><td>AWS 권한</td><td>IAM Role / Policy 생성 및 편집</td></tr>
+            </tbody>
+          </table>
+          <div class="highlight-box info" style="margin-top: 16px;">
+            <strong>Tip:</strong> Account Console에 로그인 시 워크스페이스 목록이 아닌 대시보드가 보이면 Account Admin 권한이 있는 것입니다.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> Unity Catalog Metastore 생성 (선택)</h3>
+          <ul class="small">
+            <li>Metastore는 Unity Catalog의 최상위 컴포넌트</li>
+            <li>같은 Account + Region 내 모든 워크스페이스에서 공유</li>
+            <li>Account Console → <strong>Catalog</strong> → <strong>Create metastore</strong></li>
+          </ul>
+          <div class="highlight-box warning">
+            <strong>권장:</strong> S3 bucket path 및 IAM role ARN은 비워두세요.<br/>
+            기본 저장소는 Catalog 레벨에서 분리 관리하는 것이 best practice입니다.
+          </div>
+          <div class="screenshot-placeholder" style="margin-top: 16px;">
+            <p>Account Console → Catalog → Create metastore 화면</p>
+            <p class="placeholder-label">aws-general-01-create-metastore.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> Customer VPC 생성</h3>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>AWS Console → VPC → Create VPC</strong></p>
+              <ul class="small">
+                <li><strong>VPC and More</strong> 옵션 선택</li>
+                <li>IPv4 CIDR: <code>/25</code> 이상 확보</li>
+                <li>Availability Zone: 최소 <strong>2개</strong></li>
+                <li>Private Subnet: <strong>4개</strong> (각 <code>/26</code> 이상)</li>
+                <li>S3 Gateway Endpoint: <strong>포함</strong></li>
+                <li>DNS hostname/resolution: <strong>활성화</strong></li>
+              </ul>
+            </div>
+            <div class="col">
+              <div class="screenshot-placeholder">
+                <p>AWS VPC 생성 화면<br/>(VPC and More)</p>
+                <p class="placeholder-label">aws-general-02-vpc-create.png</p>
+              </div>
+            </div>
+          </div>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>Note:</strong> VPC ID와 Private Subnet ID를 반드시 기록해두세요.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">3</span> Security Group 설정</h3>
+          <p class="small">VPC Dashboard → Security Groups → <strong>Create security group</strong></p>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>Egress (Outbound) Rules</strong></p>
+              <table>
+                <thead><tr><th>Type</th><th>Port</th><th>Destination</th></tr></thead>
+                <tbody>
+                  <tr><td>All TCP</td><td>All</td><td>Self (SG 자기 참조)</td></tr>
+                  <tr><td>All UDP</td><td>All</td><td>Self (SG 자기 참조)</td></tr>
+                  <tr><td>HTTPS</td><td>443</td><td>0.0.0.0/0</td></tr>
+                  <tr><td>Custom TCP</td><td>8443-8451</td><td>0.0.0.0/0</td></tr>
+                  <tr><td>Custom TCP</td><td>6666</td><td>0.0.0.0/0</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col">
+              <p class="small"><strong>Ingress (Inbound) Rules</strong></p>
+              <table>
+                <thead><tr><th>Type</th><th>Port</th><th>Source</th></tr></thead>
+                <tbody>
+                  <tr><td>All TCP</td><td>All</td><td>Self (SG 자기 참조)</td></tr>
+                  <tr><td>All UDP</td><td>All</td><td>Self (SG 자기 참조)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <p class="tiny" style="margin-top: 12px; color: #888;">Security Group ID를 기록해두세요 (워크스페이스 생성 시 필요)</p>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">4</span> Cross-Account IAM Role 생성</h3>
+          <p class="small">IAM → Roles → <strong>Create role</strong> → Custom Trust Policy</p>
+          <pre><code class="language-json">{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {
+      "AWS": "arn:aws:iam::414351767826:root"
+    },
+    "Action": "sts:AssumeRole",
+    "Condition": {
+      "StringEquals": {
+        "sts:ExternalId": "&lt;YOUR_DATABRICKS_ACCOUNT_ID&gt;"
+      }
+    }
+  }]
+}</code></pre>
+          <div class="highlight-box">
+            <strong>414351767826</strong>은 Databricks의 AWS Account ID입니다.<br/>
+            <code>sts:ExternalId</code>에는 Databricks Account ID를 입력합니다.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">5</span> Default Storage (S3 Bucket + IAM Role)</h3>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>S3 Bucket 생성</strong></p>
+              <ul class="smaller">
+                <li>워크스페이스와 같은 Region에 생성</li>
+                <li>Block Public Access 활성화</li>
+                <li>Bucket Versioning 권장</li>
+              </ul>
+              <p class="small" style="margin-top: 12px;"><strong>IAM Role 설정</strong></p>
+              <ul class="smaller">
+                <li>UC Master Role Trust Policy 추가</li>
+                <li>S3 접근 Inline Policy 추가</li>
+                <li>Self-trusting Role ARN 추가</li>
+              </ul>
+            </div>
+            <div class="col">
+              <div class="screenshot-placeholder">
+                <p>S3 Bucket 생성 + IAM Role 설정 화면</p>
+                <p class="placeholder-label">aws-general-05-storage-setup.png</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">6</span> 워크스페이스 생성</h3>
+          <p class="small">Account Console → Workspaces → <strong>Create a workspace</strong></p>
+          <ol class="small">
+            <li>Workspace name 및 Region 입력</li>
+            <li>Storage and Compute → <strong>Use your existing cloud account</strong></li>
+            <li><strong>Cloud Credentials</strong>: Cross-Account IAM Role ARN 입력</li>
+            <li><strong>Cloud Storage</strong>: S3 Bucket 이름 + Root Storage Role ARN 입력</li>
+            <li><strong>Network Configuration</strong>: VPC ID, Subnet IDs, Security Group ID 입력</li>
+            <li><strong>Create workspace</strong> 클릭</li>
+          </ol>
+          <div class="screenshot-placeholder" style="margin-top: 12px;">
+            <p>Workspace 생성 위저드 화면</p>
+            <p class="placeholder-label">aws-general-06-create-workspace.png</p>
+          </div>
+        </section>
+
+        <section>
+          <h3><span class="step-number">7</span> 워크스페이스 접속 확인</h3>
+          <div class="highlight-box info">
+            <strong>확인 사항:</strong>
+            <ul class="small">
+              <li>워크스페이스 URL 접속 가능 여부</li>
+              <li>클러스터 생성/시작 정상 작동</li>
+              <li>S3 접근 (DBFS) 정상 작동</li>
+              <li>Unity Catalog Metastore 연동 확인</li>
+            </ul>
+          </div>
+          <div class="screenshot-placeholder" style="margin-top: 16px;">
+            <p>워크스페이스 로그인 및 메인 화면</p>
+            <p class="placeholder-label">aws-general-07-workspace-login.png</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- AWS BACKEND PRIVATE LINK -->
+      <!-- ============================================================ -->
+      <section>
+        <section data-background-color="#232F3E">
+          <span class="csp-badge aws" style="font-size: 0.9em;">AWS</span>
+          <h2 style="color: #fff; margin-top: 16px;">Backend Private Link</h2>
+          <p style="color: #ccc; font-size: 0.65em;">Compute Plane → Control Plane 전용 연결</p>
+        </section>
+
+        <section>
+          <h3><span class="csp-badge aws">AWS</span> Backend Private Link 아키텍처</h3>
+          <div class="architecture-diagram">
+            <img src="assets/images/aws/aws-backend-pl-architecture.png" alt="AWS Backend Private Link Architecture"
+                 class="screenshot"
+                 onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>Backend Private Link 아키텍처</p><p class=\'placeholder-label\'>Compute Plane (Customer VPC) → VPC Endpoints → Control Plane</p></div>'" />
+          </div>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>목적:</strong> Compute Plane에서 Control Plane으로의 통신을 AWS 내부 네트워크(Private Link)를 통해 수행
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3>Option 1 vs Option 2</h3>
+          <div class="columns">
+            <div class="col">
+              <div class="option-box option-1">
+                <h4 class="small">Option 1: NAT Gateway 포함</h4>
+                <ul class="smaller">
+                  <li>Regional NAT Gateway + Internet Gateway 배포</li>
+                  <li>STS, Kinesis는 공용 인터넷 경유</li>
+                  <li>구성이 비교적 단순</li>
+                  <li>NAT Gateway 비용 발생</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col">
+              <div class="option-box option-2">
+                <h4 class="small">Option 2: 완전 Private (NAT 없음)</h4>
+                <ul class="smaller">
+                  <li>NAT Gateway 없음 → 공용 인터넷 미사용</li>
+                  <li>STS, Kinesis용 VPC Endpoint 추가 필요</li>
+                  <li>더 높은 보안 수준</li>
+                  <li>추가 Endpoint 비용 발생</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> Endpoints 서브넷 구성</h3>
+          <p class="small">Customer VPC 내에 Databricks 서비스 Endpoint용 전용 서브넷 생성</p>
+          <ul class="small">
+            <li><strong>databricks-endpoints-subnet</strong>: Databricks 서비스 (REST API, SCC) Endpoint용</li>
+            <li class="fragment"><strong>aws-endpoints-subnet</strong> (Option 2만): STS, Kinesis Endpoint용</li>
+          </ul>
+          <div class="screenshot-placeholder" style="margin-top: 16px;">
+            <p>VPC → Subnets → 서브넷 생성 화면</p>
+            <p class="placeholder-label">aws-backend-pl-01-endpoint-subnet.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> Endpoint Security Group 생성</h3>
+          <p class="small"><strong>databricks-backend-endpoints-securitygroup</strong> 생성</p>
+          <table>
+            <thead><tr><th>Direction</th><th>Type</th><th>Port</th><th>Source/Dest</th></tr></thead>
+            <tbody>
+              <tr><td>Inbound</td><td>HTTPS</td><td>443</td><td>Customer VPC CIDR</td></tr>
+              <tr><td>Inbound</td><td>Custom TCP</td><td>6666</td><td>Customer VPC CIDR</td></tr>
+              <tr><td>Outbound</td><td>HTTPS</td><td>443</td><td>Customer VPC CIDR</td></tr>
+              <tr><td>Outbound</td><td>Custom TCP</td><td>6666</td><td>Customer VPC CIDR</td></tr>
+            </tbody>
+          </table>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>SRA 참고:</strong> Inbound only 설정이 더 제한적이지만 Private Link 통신에 충분합니다.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">3</span> REST API VPC Endpoint 생성</h3>
+          <p class="small">VPC Dashboard → Endpoints → <strong>Create endpoint</strong></p>
+          <ol class="small">
+            <li>Service type: <strong>services that use NLBs and GWLBs</strong></li>
+            <li>Service name: Regional <strong>Workspace (REST API)</strong> 서비스명 입력
+              <br/><span class="tiny">예: <code>com.amazonaws.vpce.us-west-2.vpce-svc-xxxxxxxxx</code></span></li>
+            <li>VPC: <strong>Customer VPC</strong> 선택</li>
+            <li>Subnet: <strong>databricks-endpoints-subnet</strong> 선택</li>
+            <li>Security group: <strong>databricks-backend-endpoints-securitygroup</strong></li>
+            <li><strong>Enable private DNS name</strong> 활성화</li>
+          </ol>
+          <div class="highlight-box warning" style="margin-top: 8px;">
+            <strong>AWS VPC Endpoint ID</strong>를 반드시 기록하세요! (Databricks Account Console 등록 시 필요)
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">4</span> SCC Relay VPC Endpoint 생성</h3>
+          <p class="small">동일 절차로 <strong>Secure Cluster Connectivity (SCC) Relay</strong> Endpoint 생성</p>
+          <ul class="small">
+            <li>Service name: Regional <strong>SCC Relay</strong> 서비스명 입력</li>
+            <li>이름에 <code>scc</code> 포함 권장 (예: <code>databricks-us-west-2-scc-vpce</code>)</li>
+            <li>같은 서브넷 및 Security Group 사용</li>
+          </ul>
+          <div class="screenshot-placeholder" style="margin-top: 16px;">
+            <p>VPC Endpoint 생성 화면 (SCC Relay)</p>
+            <p class="placeholder-label">aws-backend-pl-04-scc-endpoint.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">5</span> Option 2: STS &amp; Kinesis Endpoints</h3>
+          <div class="highlight-box warning">
+            <strong>Option 2 (완전 Private) 선택 시에만 필요</strong>
+          </div>
+          <div class="columns" style="margin-top: 12px;">
+            <div class="col">
+              <p class="small"><strong>aws-endpoints-securitygroup</strong> 생성</p>
+              <ul class="smaller">
+                <li>Inbound: HTTPS/443 from VPC CIDR</li>
+              </ul>
+            </div>
+            <div class="col">
+              <p class="small"><strong>VPC Endpoints 생성</strong></p>
+              <ul class="smaller">
+                <li>Type: <strong>AWS Services</strong></li>
+                <li><code>com.amazonaws.{region}.kinesis-streams</code></li>
+                <li><code>com.amazonaws.{region}.sts</code></li>
+                <li>Enable DNS name 활성화</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">6</span> Databricks Account Console 등록</h3>
+          <p class="small">Account Console → Cloud Resources → <strong>VPC Endpoints</strong></p>
+          <ol class="small">
+            <li><strong>Register VPC endpoint</strong> 클릭</li>
+            <li>REST API Endpoint의 <strong>AWS VPC Endpoint ID</strong> 등록</li>
+            <li>SCC Relay Endpoint의 <strong>AWS VPC Endpoint ID</strong> 등록</li>
+          </ol>
+          <div class="screenshot-placeholder" style="margin-top: 16px;">
+            <p>Account Console → VPC Endpoints 등록 화면</p>
+            <p class="placeholder-label">aws-backend-pl-06-register-endpoint.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">7</span> Network Configuration &amp; Workspace</h3>
+          <p class="small">Account Console에서 Network Configuration 객체를 생성하고 워크스페이스에 연결합니다.</p>
+          <ul class="small">
+            <li><strong>Network Configuration</strong>: VPC ID, Subnet IDs, SG IDs, VPC Endpoint IDs</li>
+            <li>새 워크스페이스 생성 시 해당 Network Config 선택</li>
+            <li>또는 기존 워크스페이스에 Network Config 업데이트 (워크스페이스 재시작 필요)</li>
+          </ul>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>확인:</strong> 클러스터 시작 후 Control Plane 통신이 Private Link를 통해 이루어지는지 확인하세요.
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- AWS FRONTEND PRIVATE LINK -->
+      <!-- ============================================================ -->
+      <section>
+        <section data-background-color="#232F3E">
+          <span class="csp-badge aws" style="font-size: 0.9em;">AWS</span>
+          <h2 style="color: #fff; margin-top: 16px;">Frontend Private Link</h2>
+          <p style="color: #ccc; font-size: 0.65em;">사용자 → Control Plane 전용 연결 (Transit VPC)</p>
+        </section>
+
+        <section>
+          <h3><span class="csp-badge aws">AWS</span> Frontend Private Link 아키텍처</h3>
+          <div class="architecture-diagram">
+            <img src="assets/images/aws/aws-frontend-pl-architecture.png" alt="AWS Frontend Private Link Architecture"
+                 class="screenshot"
+                 onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>Frontend Private Link 아키텍처</p><p class=\'placeholder-label\'>User (On-prem) → Transit VPC → VPC Endpoint → Control Plane</p></div>'" />
+          </div>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>목적:</strong> 사용자가 공용 인터넷을 거치지 않고 Private Link를 통해 Databricks 웹 애플리케이션에 접속
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3>Transit VPC 요구사항</h3>
+          <table>
+            <thead><tr><th>항목</th><th>요구사항</th></tr></thead>
+            <tbody>
+              <tr><td>Transit VPC</td><td>사용 가능한 VPC 존재</td></tr>
+              <tr><td>Private Subnet</td><td>1개 이상의 Private Subnet</td></tr>
+              <tr><td>Security Group</td><td>HTTPS/443 양방향 허용</td></tr>
+              <tr><td>On-prem 연결</td><td>VPN/Direct Connect 통한 Transit VPC 접속 경로</td></tr>
+            </tbody>
+          </table>
+          <div class="highlight-box warning" style="margin-top: 12px;">
+            <strong>참고:</strong> 경우에 따라 Customer VPC와 Transit VPC를 하나의 VPC로 통합할 수 있으며,
+            이 경우 동일한 REST API Endpoint를 Backend/Frontend 모두에 재사용합니다.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> Frontend VPC Endpoint 생성</h3>
+          <p class="small"><strong>Transit VPC</strong>에서 VPC Endpoint 생성</p>
+          <ol class="small">
+            <li>Service type: <strong>services that use NLBs and GWLBs</strong></li>
+            <li>Service name: Regional <strong>Workspace (REST API)</strong> 서비스명
+              <br/><span class="tiny">(Backend PL의 REST API Endpoint와 동일한 서비스명)</span></li>
+            <li>VPC: <strong>Transit VPC</strong> 선택</li>
+            <li>Subnet: Transit VPC의 <strong>Private Subnet</strong> 선택</li>
+            <li>이름 예: <code>databricks-us-west-2-workspace-fe-vpce</code></li>
+          </ol>
+          <div class="highlight-box">
+            AWS VPC Endpoint ID를 기록하세요 (<strong>Frontend-REST-API-endpoint</strong>)
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> Account Console에 Frontend Endpoint 등록</h3>
+          <p class="small">Account Console → Security → Connectivity → <strong>VPC Endpoints</strong></p>
+          <ol class="small">
+            <li><strong>Register VPC endpoint</strong> 클릭</li>
+            <li>설명적인 이름 입력 (Frontend임을 구분할 수 있도록)</li>
+            <li>Region 선택</li>
+            <li><strong>Frontend-REST-API-endpoint</strong> AWS VPC Endpoint ID 입력</li>
+            <li>등록 완료</li>
+          </ol>
+          <div class="screenshot-placeholder" style="margin-top: 16px;">
+            <p>Account Console → VPC Endpoints 등록 (Frontend)</p>
+            <p class="placeholder-label">aws-frontend-pl-02-register-endpoint.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">3</span> Private Access Settings 생성</h3>
+          <p class="small">Account Console → Security → Connectivity → <strong>Private access settings</strong></p>
+          <ul class="small">
+            <li>Private Access Settings 객체는 워크스페이스의 Frontend Private Link 연결을 정의</li>
+            <li>설정 항목:
+              <ul class="smaller">
+                <li><strong>Public Access</strong>: Disabled (Private Link만 허용) 또는 Enabled</li>
+                <li><strong>Private Access Level</strong>: Account / Any</li>
+              </ul>
+            </li>
+            <li>워크스페이스에 이 설정을 적용하여 Frontend PL 활성화</li>
+          </ul>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">4</span> DNS 구성</h3>
+          <p class="small">사용자 요청이 Frontend VPC Endpoint로 라우팅되도록 DNS 설정</p>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>Route53 Private Hosted Zone</strong></p>
+              <ul class="smaller">
+                <li>Zone: <code>cloud.databricks.com</code></li>
+                <li>CNAME: 워크스페이스 URL → Frontend Endpoint DNS</li>
+                <li>Transit VPC에 연결</li>
+              </ul>
+            </div>
+            <div class="col">
+              <div class="screenshot-placeholder">
+                <p>Route53 Private Hosted Zone 설정</p>
+                <p class="placeholder-label">aws-frontend-pl-04-dns-config.png</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3><span class="step-number">5</span> 접속 확인</h3>
+          <div class="highlight-box info">
+            <strong>검증 단계:</strong>
+            <ol class="small">
+              <li>On-prem 또는 Transit VPC에서 <code>nslookup {workspace-url}</code> 실행</li>
+              <li>Private IP로 해석되는지 확인</li>
+              <li>브라우저에서 워크스페이스 URL 접속</li>
+              <li>Public 접근 비활성화 시 외부에서 접속 불가 확인</li>
+            </ol>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- AZURE GENERAL WORKSPACE -->
+      <!-- ============================================================ -->
+      <section>
+        <section data-background-color="#0078D4">
+          <span class="csp-badge azure" style="font-size: 0.9em;">Azure</span>
+          <h2 style="color: #fff; margin-top: 16px;">일반 워크스페이스 구성</h2>
+          <p style="color: #ddd; font-size: 0.65em;">VNet &middot; NSG &middot; Storage &middot; Workspace 배포</p>
+        </section>
+
+        <section>
+          <h3><span class="csp-badge azure">Azure</span> 배포 아키텍처</h3>
+          <div class="architecture-diagram">
+            <img src="assets/images/azure/azure-general-architecture.png" alt="Azure Databricks General Architecture"
+                 class="screenshot"
+                 onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>Azure Databricks 배포 아키텍처</p><p class=\'placeholder-label\'>Control Plane (Databricks Managed) ↔ Data Plane (Customer VNet) ↔ ADLS Gen2</p></div>'" />
+          </div>
+          <aside class="notes">
+            Azure Databricks는 Control Plane(Databricks 관리)과 Data Plane(고객 VNet)으로 구성됩니다.
+          </aside>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">0</span> 사전 준비 사항</h3>
+          <table>
+            <thead><tr><th>항목</th><th>요구사항</th></tr></thead>
+            <tbody>
+              <tr><td>Azure 구독</td><td>활성 구독 (Contributor 이상 권한)</td></tr>
+              <tr><td>리소스 그룹</td><td>워크스페이스용 리소스 그룹 생성</td></tr>
+              <tr><td>Databricks Account</td><td>Premium Tier 이상</td></tr>
+              <tr><td>네트워크 권한</td><td>VNet, NSG, Private Endpoint 관리 가능</td></tr>
+              <tr><td>Azure AD</td><td>Azure Active Directory 접근 가능</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> Unity Catalog Metastore 설정</h3>
+          <ul class="small">
+            <li><strong>Access Connector for Azure Databricks</strong> 리소스 생성</li>
+            <li><strong>ADLS Gen2 Storage Account</strong> 생성 (UC 메타데이터용)</li>
+            <li>Access Connector에 Storage Blob Data Contributor 역할 부여</li>
+            <li>Account Console → Catalog → <strong>Create metastore</strong></li>
+            <li>Access Connector Resource ID 입력</li>
+          </ul>
+          <div class="screenshot-placeholder" style="margin-top: 16px;">
+            <p>Azure Portal - Access Connector 생성 화면</p>
+            <p class="placeholder-label">azure-general-01-access-connector.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> VNet 생성 (VNet Injection)</h3>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>Azure Portal → Virtual Networks → Create</strong></p>
+              <ul class="small">
+                <li>Address space: <code>/16</code> 이상 권장</li>
+                <li><strong>Public subnet</strong>: host containers용
+                  <br/><span class="tiny">Delegation: <code>Microsoft.Databricks/workspaces</code></span></li>
+                <li><strong>Private subnet</strong>: container containers용
+                  <br/><span class="tiny">Delegation: <code>Microsoft.Databricks/workspaces</code></span></li>
+                <li>각 서브넷 최소 <code>/26</code></li>
+              </ul>
+            </div>
+            <div class="col">
+              <div class="screenshot-placeholder">
+                <p>Azure VNet 생성 화면<br/>(서브넷 + Delegation)</p>
+                <p class="placeholder-label">azure-general-02-vnet-create.png</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">3</span> NSG (Network Security Group) 설정</h3>
+          <p class="small">Azure Databricks가 자동으로 필수 규칙을 추가하지만, 커스텀 VNet 사용 시 확인 필요</p>
+          <div class="highlight-box info">
+            <strong>필수 NSG 규칙:</strong>
+            <ul class="smaller">
+              <li>Databricks Control Plane → Data Plane: TCP/443, TCP/8443-8451</li>
+              <li>Data Plane → Control Plane: TCP/443</li>
+              <li>Data Plane → Azure Storage: TCP/443</li>
+              <li>Data Plane → Azure SQL (Metastore): TCP/3306</li>
+              <li>Worker ↔ Worker: Any (내부 통신)</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">4</span> 워크스페이스 배포</h3>
+          <p class="small">Azure Portal → <strong>Azure Databricks</strong> → Create</p>
+          <ol class="small">
+            <li><strong>Basics</strong>: 구독, 리소스 그룹, 워크스페이스 이름, Region, Pricing Tier (Premium)</li>
+            <li><strong>Networking</strong>: <strong>Deploy in your own VNet (VNet Injection)</strong> 선택</li>
+            <li>VNet, Public Subnet, Private Subnet 선택</li>
+            <li><strong>Review + Create</strong></li>
+          </ol>
+          <div class="screenshot-placeholder" style="margin-top: 12px;">
+            <p>Azure Databricks Workspace 배포 화면</p>
+            <p class="placeholder-label">azure-general-04-deploy-workspace.png</p>
+          </div>
+        </section>
+
+        <section>
+          <h3><span class="step-number">5</span> 워크스페이스 접속 확인</h3>
+          <div class="highlight-box info">
+            <strong>확인 사항:</strong>
+            <ul class="small">
+              <li>Azure Portal에서 배포 완료 확인</li>
+              <li>워크스페이스 URL 접속 → Azure AD 로그인</li>
+              <li>클러스터 생성/시작 정상 작동</li>
+              <li>Managed Resource Group 리소스 확인</li>
+              <li>Unity Catalog Metastore 연동 확인</li>
+            </ul>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- AZURE BACKEND PRIVATE LINK -->
+      <!-- ============================================================ -->
+      <section>
+        <section data-background-color="#0078D4">
+          <span class="csp-badge azure" style="font-size: 0.9em;">Azure</span>
+          <h2 style="color: #fff; margin-top: 16px;">Backend Private Link</h2>
+          <p style="color: #ddd; font-size: 0.65em;">Data Plane → Control Plane Private Endpoint 연결</p>
+        </section>
+
+        <section>
+          <h3><span class="csp-badge azure">Azure</span> Backend Private Link 아키텍처</h3>
+          <div class="architecture-diagram">
+            <img src="assets/images/azure/azure-backend-pl-architecture.png" alt="Azure Backend Private Link Architecture"
+                 class="screenshot"
+                 onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>Azure Backend Private Link 아키텍처</p><p class=\'placeholder-label\'>Data Plane (Customer VNet) → Private Endpoints → Control Plane</p></div>'" />
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> Private Endpoint 생성</h3>
+          <p class="small">Azure Portal → Private Link Center → <strong>Private endpoints</strong> → Create</p>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>databricks_ui_api</strong></p>
+              <ul class="smaller">
+                <li>Resource type: <code>Microsoft.Databricks/workspaces</code></li>
+                <li>Sub-resource: <code>databricks_ui_api</code></li>
+                <li>VNet: Customer VNet</li>
+                <li>Subnet: Private Endpoint 전용 서브넷</li>
+              </ul>
+            </div>
+            <div class="col">
+              <p class="small"><strong>browser_authentication</strong></p>
+              <ul class="smaller">
+                <li>Resource type: <code>Microsoft.Databricks/workspaces</code></li>
+                <li>Sub-resource: <code>browser_authentication</code></li>
+                <li>동일 VNet/Subnet 사용</li>
+                <li>SSO 인증을 Private Link로 처리</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> Private DNS Zone 구성</h3>
+          <ol class="small">
+            <li>Private DNS Zone 생성: <code>privatelink.azuredatabricks.net</code></li>
+            <li>DNS Zone을 Customer VNet에 연결 (Virtual network link)</li>
+            <li>Private Endpoint 생성 시 자동으로 DNS 레코드 추가됨</li>
+          </ol>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>자동 DNS:</strong> Private Endpoint 생성 시 "Integrate with private DNS zone" 옵션을 활성화하면
+            DNS Zone 생성 및 레코드 등록이 자동으로 처리됩니다.
+          </div>
+          <div class="screenshot-placeholder" style="margin-top: 12px;">
+            <p>Private DNS Zone → Virtual network links 화면</p>
+            <p class="placeholder-label">azure-backend-pl-02-dns-zone.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">3</span> Workspace 배포 설정</h3>
+          <p class="small">워크스페이스 배포 시 또는 배포 후 네트워크 설정에서:</p>
+          <ul class="small">
+            <li><strong>Networking</strong> 탭 → <strong>No Public IP (NPIP)</strong> 활성화</li>
+            <li>Private Endpoint Connections에서 생성된 PE 승인</li>
+            <li>Public Network Access를 필요에 따라 설정</li>
+          </ul>
+          <div class="highlight-box warning" style="margin-top: 12px;">
+            <strong>확인:</strong> Private Endpoint 상태가 <strong>Approved</strong>이고
+            Connection State가 <strong>Succeeded</strong>인지 확인하세요.
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- AZURE FRONTEND PRIVATE LINK -->
+      <!-- ============================================================ -->
+      <section>
+        <section data-background-color="#0078D4">
+          <span class="csp-badge azure" style="font-size: 0.9em;">Azure</span>
+          <h2 style="color: #fff; margin-top: 16px;">Frontend Private Link</h2>
+          <p style="color: #ddd; font-size: 0.65em;">사용자 → Workspace Private Endpoint 접속</p>
+        </section>
+
+        <section>
+          <h3><span class="csp-badge azure">Azure</span> Frontend Private Link 아키텍처</h3>
+          <div class="architecture-diagram">
+            <img src="assets/images/azure/azure-frontend-pl-architecture.png" alt="Azure Frontend Private Link Architecture"
+                 class="screenshot"
+                 onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>Azure Frontend Private Link 아키텍처</p><p class=\'placeholder-label\'>User (On-prem/VPN) → Transit VNet → Private Endpoint → Control Plane</p></div>'" />
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> Transit VNet 구성</h3>
+          <ul class="small">
+            <li>사용자 접속용 별도 VNet 생성 (또는 기존 Hub VNet 사용)</li>
+            <li>Private Endpoint용 서브넷 확보</li>
+            <li>On-prem에서 VPN Gateway / ExpressRoute 통한 접속 경로 확보</li>
+          </ul>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>Hub-Spoke 아키텍처:</strong> 대부분의 엔터프라이즈 환경에서는 Hub VNet에 Frontend Private Endpoint를 배치하고,
+            Spoke VNet에 Databricks 워크스페이스를 배포하는 패턴을 사용합니다.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> Frontend Private Endpoint 생성</h3>
+          <p class="small">Transit VNet에 사용자 접속용 Private Endpoint 생성</p>
+          <ul class="small">
+            <li>Resource type: <code>Microsoft.Databricks/workspaces</code></li>
+            <li>Sub-resource: <code>databricks_ui_api</code></li>
+            <li>VNet/Subnet: <strong>Transit VNet</strong>의 PE 서브넷</li>
+          </ul>
+          <div class="screenshot-placeholder" style="margin-top: 16px;">
+            <p>Frontend Private Endpoint 생성 화면</p>
+            <p class="placeholder-label">azure-frontend-pl-02-frontend-pe.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">3</span> Private DNS Zone 연결</h3>
+          <ul class="small">
+            <li>기존 <code>privatelink.azuredatabricks.net</code> DNS Zone에 Transit VNet 연결 추가</li>
+            <li>또는 새로운 DNS Zone 생성 후 Transit VNet에 연결</li>
+            <li>On-prem DNS에서 Azure Private DNS로 조건부 전달(Conditional Forwarding) 설정</li>
+          </ul>
+          <div class="highlight-box warning" style="margin-top: 12px;">
+            <strong>On-prem DNS:</strong> On-prem 사용자가 Private Endpoint IP로 해석되려면
+            DNS Forwarder (Azure DNS Private Resolver 등)가 필요합니다.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">4</span> 공용 네트워크 접근 비활성화</h3>
+          <p class="small">Azure Portal → Databricks Workspace → Networking</p>
+          <ul class="small">
+            <li><strong>Allow public network access</strong>: <code>No</code>로 설정</li>
+            <li>이후 모든 접속은 Private Endpoint를 통해서만 가능</li>
+            <li><strong>Required NSG rules</strong>: <code>NoAzureDatabricksRules</code> 선택 가능</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3><span class="step-number">5</span> 접속 확인</h3>
+          <div class="highlight-box info">
+            <strong>검증 단계:</strong>
+            <ol class="small">
+              <li>Transit VNet/On-prem에서 <code>nslookup {workspace-url}</code></li>
+              <li>Private IP (10.x.x.x)로 해석되는지 확인</li>
+              <li>브라우저에서 워크스페이스 URL 접속</li>
+              <li>외부 네트워크에서 접속 불가 확인 (공용 접근 비활성화 시)</li>
+            </ol>
+          </div>
+          <pre><code class="language-bash"># DNS 해석 확인 예시
+$ nslookup adb-1234567890123456.16.azuredatabricks.net
+Address: 10.0.1.4  # Private IP로 해석됨</code></pre>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SUMMARY -->
+      <!-- ============================================================ -->
+      <section data-background-color="#1B3139">
+        <h2 style="color: #fff;">요약</h2>
+        <table style="color: #ddd;">
+          <thead>
+            <tr>
+              <th></th>
+              <th><span class="csp-badge aws">AWS</span></th>
+              <th><span class="csp-badge azure">Azure</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#fff;">일반</td>
+              <td class="smaller">VPC + IAM + S3 + Account Console</td>
+              <td class="smaller">VNet + NSG + ADLS + Azure Portal</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;">Backend PL</td>
+              <td class="smaller">VPC Endpoint (REST API + SCC)<br/>Option 1 (NAT) / Option 2 (Full Private)</td>
+              <td class="smaller">Private Endpoint (ui_api + browser_auth)<br/>Private DNS Zone</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;">Frontend PL</td>
+              <td class="smaller">Transit VPC + Frontend Endpoint<br/>Route53 Private Hosted Zone</td>
+              <td class="smaller">Transit VNet + Frontend PE<br/>DNS Conditional Forwarding</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="section-divider" style="border-color: #FF3621; margin-top: 30px;"></div>
+        <p class="tiny" style="color: #888;">별도 공유 자료 반영 시 업데이트 예정</p>
+      </section>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import Reveal from 'reveal.js';
+    import Highlight from 'reveal.js/plugin/highlight/highlight.esm.js';
+    import Notes from 'reveal.js/plugin/notes/notes.esm.js';
+    import Zoom from 'reveal.js/plugin/zoom/zoom.esm.js';
+
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      width: 1280,
+      height: 720,
+      margin: 0.04,
+      transition: 'slide',
+      plugins: [Highlight, Notes, Zoom],
+    });
+  </script>
+</body>
+</html>

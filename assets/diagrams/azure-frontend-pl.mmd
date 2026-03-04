@@ -1,0 +1,42 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#0078D4', 'primaryTextColor': '#fff', 'lineColor': '#333'}}}%%
+graph TB
+    USER["User (On-prem / VPN)"]
+
+    subgraph HUB["Hub/Transit VNet"]
+        FEPE["Frontend Private Endpoint<br/>databricks_ui_api"]
+        VPNGW["VPN Gateway /<br/>ExpressRoute"]
+    end
+
+    subgraph CP["Control Plane (Databricks Managed)"]
+        WEB["Web App / REST API"]
+        AUTH["Browser Auth"]
+    end
+
+    subgraph SPOKE["Spoke VNet (Customer)"]
+        PUBSUB["Public Subnet"]
+        PRIVSUB["Private Subnet"]
+        subgraph BEPE["Backend PE Subnet"]
+            PE1["PE: databricks_ui_api"]
+            PE2["PE: browser_authentication"]
+        end
+    end
+
+    DNS["Private DNS Zone<br/>privatelink.azuredatabricks.net"]
+
+    USER -->|"VPN / ExpressRoute"| VPNGW
+    VPNGW --> FEPE
+    FEPE -->|"Azure PrivateLink"| WEB
+    PE1 -->|"Azure PrivateLink"| WEB
+    PE2 -->|"Azure PrivateLink"| AUTH
+    DNS -.-|"DNS Resolution"| FEPE
+    DNS -.-|"DNS Resolution"| PE1
+
+    classDef controlPlane fill:#1B3139,stroke:#333,color:#fff
+    classDef hub fill:#2E7D32,stroke:#333,color:#fff
+    classDef endpoint fill:#FF3621,stroke:#333,color:#fff
+    classDef user fill:#0078D4,stroke:#333,color:#fff
+
+    class CP controlPlane
+    class HUB hub
+    class FEPE,PE1,PE2 endpoint
+    class USER user

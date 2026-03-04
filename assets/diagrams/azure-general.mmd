@@ -1,0 +1,38 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#0078D4', 'primaryTextColor': '#fff', 'lineColor': '#333'}}}%%
+graph TB
+    subgraph CP["Control Plane (Databricks Managed)"]
+        direction TB
+        WEB["Web App / REST API"]
+        CM["Cluster Manager"]
+        UC["Unity Catalog"]
+    end
+
+    subgraph CUST["Customer Azure Subscription"]
+        subgraph VNET["Customer VNet"]
+            direction TB
+            PUBSUB["Public Subnet<br/>(host containers)<br/>Delegation: Microsoft.Databricks"]
+            PRIVSUB["Private Subnet<br/>(container containers)<br/>Delegation: Microsoft.Databricks"]
+            NSG["NSG Rules"]
+        end
+        subgraph MRG["Managed Resource Group"]
+            DISKS["Managed Disks"]
+            NIC["Network Interfaces"]
+        end
+        ADLS["ADLS Gen2<br/>Storage Account"]
+    end
+
+    WEB <-->|"HTTPS/443"| PUBSUB
+    PUBSUB <--> PRIVSUB
+    PRIVSUB --> ADLS
+    NSG -.- PUBSUB
+    NSG -.- PRIVSUB
+
+    classDef controlPlane fill:#1B3139,stroke:#333,color:#fff
+    classDef vnet fill:#0078D4,stroke:#0078D4,color:#fff
+    classDef managed fill:#5C2D91,stroke:#333,color:#fff
+    classDef storage fill:#0078D4,stroke:#333,color:#fff
+
+    class CP controlPlane
+    class VNET vnet
+    class MRG managed
+    class ADLS storage

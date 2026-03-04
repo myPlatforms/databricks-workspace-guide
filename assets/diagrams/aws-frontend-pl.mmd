@@ -1,0 +1,39 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FF3621', 'primaryTextColor': '#fff', 'lineColor': '#333'}}}%%
+graph TB
+    USER["User (On-prem / VPN)"]
+
+    subgraph TRANSIT["Transit VPC"]
+        FEEP["Frontend REST API<br/>VPC Endpoint"]
+    end
+
+    subgraph CP["Control Plane (Databricks Managed)"]
+        WEB["Web App / REST API"]
+        SCC["SCC Relay"]
+    end
+
+    subgraph CUST["Customer VPC"]
+        subgraph COMPUTE["Compute Subnets"]
+            SPARK["Spark Clusters"]
+        end
+        subgraph BEEP["Backend Endpoints"]
+            RESTEP["REST API Endpoint"]
+            SCCEP["SCC Relay Endpoint"]
+        end
+    end
+
+    USER -->|"VPN / Direct Connect"| FEEP
+    FEEP -->|"AWS PrivateLink"| WEB
+    SPARK -->|"Private Link"| RESTEP
+    SPARK -->|"Private Link"| SCCEP
+    RESTEP -->|"AWS PrivateLink"| WEB
+    SCCEP -->|"AWS PrivateLink"| SCC
+
+    classDef controlPlane fill:#1B3139,stroke:#333,color:#fff
+    classDef transit fill:#2E7D32,stroke:#333,color:#fff
+    classDef endpoint fill:#FF3621,stroke:#333,color:#fff
+    classDef user fill:#FF9900,stroke:#333,color:#000
+
+    class CP controlPlane
+    class TRANSIT transit
+    class FEEP,RESTEP,SCCEP endpoint
+    class USER user
