@@ -7,7 +7,7 @@ dist/
 # Backup/duplicate images
 *_.png
 *copy*.png
-databricks_logo.png
-dbx_icon.png
-dbx_icon_transparent.png
-endpoint.png
+/databricks_logo.png
+/dbx_icon.png
+/dbx_icon_transparent.png
+/endpoint.png
