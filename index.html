@@ -4,12 +4,127 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Databricks Workspace 구성 가이드</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png" />
   <link rel="stylesheet" href="node_modules/reveal.js/dist/reveal.css" />
   <link rel="stylesheet" href="node_modules/reveal.js/dist/theme/white.css" />
   <link rel="stylesheet" href="node_modules/reveal.js/plugin/highlight/monokai.css" />
   <link rel="stylesheet" href="assets/css/custom.css" />
 </head>
 <body>
+  <!-- ===== LEFT SIDEBAR NAVIGATION ===== -->
+  <nav id="sidebar">
+    <div class="sidebar-title">
+      <img src="assets/images/databricks_logo.png" alt="Databricks" class="sidebar-logo" />
+      <span>Workspace 구성 가이드</span>
+    </div>
+
+    <a class="nav-item nav-item-top" data-section="0" data-slide="0">개요</a>
+
+    <div class="nav-group">
+      <div class="nav-group-header"><img src="assets/icons/aws/aws-logo-white.svg" class="group-icon-img" alt="AWS" /> AWS</div>
+      <a class="nav-item nav-section-title" data-section="1" data-slide="0">일반 배포</a>
+      <div class="nav-sub" data-parent-section="1">
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="1">배포 아키텍처</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="2">사전 준비</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="3">UC Metastore</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="4">VPC 생성</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="5">Security Group</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="6">Cross-Account IAM Role</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="7">Default Storage</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="8">S3 Inline Policy</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="9">워크스페이스 생성</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="10">접속 확인</a>
+        <a class="nav-item nav-sub-item" data-section="1" data-slide="11">Terraform</a>
+      </div>
+      <a class="nav-item nav-section-title" data-section="2" data-slide="0">Backend Private Link</a>
+      <div class="nav-sub" data-parent-section="2">
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="1">아키텍처</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="2">일반 vs Backend PL</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="3">Option 1 vs 2</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="4">Endpoints 서브넷</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="5">Endpoint SG</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="6">REST API Endpoint</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="7">SCC Relay Endpoint</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="8">STS &amp; Kinesis</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="9">Account Console 등록</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="10">Network Config</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="11">PL 연결 확인</a>
+        <a class="nav-item nav-sub-item" data-section="2" data-slide="12">Terraform</a>
+      </div>
+      <a class="nav-item nav-section-title" data-section="3" data-slide="0">Frontend Private Link</a>
+      <div class="nav-sub" data-parent-section="3">
+        <a class="nav-item nav-sub-item" data-section="3" data-slide="1">아키텍처</a>
+        <a class="nav-item nav-sub-item" data-section="3" data-slide="2">Transit VPC</a>
+        <a class="nav-item nav-sub-item" data-section="3" data-slide="3">Frontend Endpoint</a>
+        <a class="nav-item nav-sub-item" data-section="3" data-slide="4">Account Console 등록</a>
+        <a class="nav-item nav-sub-item" data-section="3" data-slide="5">Private Access Settings</a>
+        <a class="nav-item nav-sub-item" data-section="3" data-slide="6">DNS 구성</a>
+        <a class="nav-item nav-sub-item" data-section="3" data-slide="7">접속 확인</a>
+        <a class="nav-item nav-sub-item" data-section="3" data-slide="8">Terraform</a>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-header"><img src="assets/icons/azure/azure-logo.svg" class="group-icon-img" alt="Azure" /> Azure</div>
+      <a class="nav-item nav-section-title" data-section="4" data-slide="0">일반 배포</a>
+      <div class="nav-sub" data-parent-section="4">
+        <a class="nav-item nav-sub-item" data-section="4" data-slide="1">배포 아키텍처</a>
+        <a class="nav-item nav-sub-item" data-section="4" data-slide="2">사전 준비</a>
+        <a class="nav-item nav-sub-item" data-section="4" data-slide="3">UC Metastore</a>
+        <a class="nav-item nav-sub-item" data-section="4" data-slide="4">VNet 생성</a>
+        <a class="nav-item nav-sub-item" data-section="4" data-slide="5">NSG 설정</a>
+        <a class="nav-item nav-sub-item" data-section="4" data-slide="6">워크스페이스 배포</a>
+        <a class="nav-item nav-sub-item" data-section="4" data-slide="7">접속 확인</a>
+        <a class="nav-item nav-sub-item" data-section="4" data-slide="8">Terraform</a>
+      </div>
+      <a class="nav-item nav-section-title" data-section="5" data-slide="0">Backend Private Link</a>
+      <div class="nav-sub" data-parent-section="5">
+        <a class="nav-item nav-sub-item" data-section="5" data-slide="1">아키텍처</a>
+        <a class="nav-item nav-sub-item" data-section="5" data-slide="2">Private Endpoint</a>
+        <a class="nav-item nav-sub-item" data-section="5" data-slide="3">DNS Zone</a>
+        <a class="nav-item nav-sub-item" data-section="5" data-slide="4">Workspace 배포</a>
+        <a class="nav-item nav-sub-item" data-section="5" data-slide="5">Terraform</a>
+      </div>
+      <a class="nav-item nav-section-title" data-section="6" data-slide="0">Frontend Private Link</a>
+      <div class="nav-sub" data-parent-section="6">
+        <a class="nav-item nav-sub-item" data-section="6" data-slide="1">아키텍처</a>
+        <a class="nav-item nav-sub-item" data-section="6" data-slide="2">Transit VNet</a>
+        <a class="nav-item nav-sub-item" data-section="6" data-slide="3">Frontend PE</a>
+        <a class="nav-item nav-sub-item" data-section="6" data-slide="4">DNS Zone 연결</a>
+        <a class="nav-item nav-sub-item" data-section="6" data-slide="5">공용 접근 비활성화</a>
+        <a class="nav-item nav-sub-item" data-section="6" data-slide="6">접속 확인</a>
+        <a class="nav-item nav-sub-item" data-section="6" data-slide="7">Terraform</a>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-header"><span class="group-icon sso">SSO</span> SSO 설정</div>
+      <a class="nav-item nav-section-title" data-section="7" data-slide="0">SSO 개요</a>
+      <div class="nav-sub" data-parent-section="7">
+        <a class="nav-item nav-sub-item" data-section="7" data-slide="1">IAM Identity Center</a>
+        <a class="nav-item nav-sub-item" data-section="7" data-slide="5">Azure Entra ID</a>
+        <a class="nav-item nav-sub-item" data-section="7" data-slide="9">Okta</a>
+        <a class="nav-item nav-sub-item" data-section="7" data-slide="12">비교표</a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      ESC: 전체 보기 &middot; S: 발표자 노트
+    </div>
+  </nav>
+
+  <!-- Prev/Next Navigation Bar -->
+  <div class="slide-nav-bar" id="slideNavBar">
+    <button id="prevBtn">
+      <span>&larr;</span> <span>이전</span>
+      <span class="nav-label" id="prevLabel"></span>
+    </button>
+    <button id="nextBtn">
+      <span class="nav-label" id="nextLabel"></span>
+      <span>다음</span> <span>&rarr;</span>
+    </button>
+  </div>
+
   <div class="reveal">
     <div class="slides">
 
@@ -89,7 +204,7 @@
       <!-- ============================================================ -->
       <section>
         <section data-background-color="#232F3E">
-          <span class="csp-badge aws" style="font-size: 0.9em;">AWS</span>
+          <img src="assets/icons/aws/aws-logo-all-white.svg" alt="AWS" style="width: 120px;" />
           <h2 style="color: #fff; margin-top: 16px;">일반 워크스페이스 구성</h2>
           <p style="color: #ccc; font-size: 0.65em;">VPC &middot; IAM &middot; S3 &middot; Workspace 생성</p>
         </section>
@@ -122,48 +237,42 @@
             </tbody>
           </table>
           <div class="highlight-box info" style="margin-top: 16px;">
-            <strong>Tip:</strong> Account Console에 로그인 시 워크스페이스 목록이 아닌 대시보드가 보이면 Account Admin 권한이 있는 것입니다.
+            <strong>Tip:</strong> Account Console에 로그인 시 워크스페이스 목록이 아닌 대시보드가 보이면 Account Admin 권한이 있는 것입니다.<br/>
+            <span class="tiny">참고: <a href="https://www.databricks.com/blog/databricks-and-aws-partner-simplify-infrastructure-setup" target="_blank" style="color: #0078D4;">Databricks and AWS Partner to Simplify Infrastructure Setup</a> — AWS 인프라 셋업 간소화 파트너십 안내</span>
           </div>
         </section>
 
         <section class="left-aligned">
           <h3><span class="step-number">1</span> Unity Catalog Metastore 생성 (선택)</h3>
-          <ul class="small">
-            <li>Metastore는 Unity Catalog의 최상위 컴포넌트</li>
-            <li>같은 Account + Region 내 모든 워크스페이스에서 공유</li>
-            <li>Account Console → <strong>Catalog</strong> → <strong>Create metastore</strong></li>
-          </ul>
-          <div class="highlight-box warning">
-            <strong>권장:</strong> S3 bucket path 및 IAM role ARN은 비워두세요.<br/>
-            기본 저장소는 Catalog 레벨에서 분리 관리하는 것이 best practice입니다.
-          </div>
-          <div class="screenshot-placeholder" style="margin-top: 16px;">
-            <p>Account Console → Catalog → Create metastore 화면</p>
-            <p class="placeholder-label">aws-general-01-create-metastore.png</p>
+          <div class="columns">
+            <div class="col">
+              <ul class="small">
+                <li>Metastore는 Unity Catalog의 최상위 컴포넌트</li>
+                <li>같은 Account + Region 내 모든 워크스페이스에서 공유</li>
+                <li>Account Console → <strong>Catalog</strong> → <strong>Create metastore</strong></li>
+              </ul>
+              <div class="highlight-box warning">
+                <strong>권장:</strong> S3 bucket path 및 IAM role ARN은 비워두세요.<br/>
+                기본 저장소는 Catalog 레벨에서 분리 관리하는 것이 best practice입니다.
+              </div>
+            </div>
+            <div class="col">
+              <img src="assets/images/aws/aws-general-01-create-metastore.png" alt="Create Metastore" class="screenshot" />
+            </div>
           </div>
         </section>
 
         <section class="left-aligned">
           <h3><span class="step-number">2</span> Customer VPC 생성</h3>
-          <div class="columns">
-            <div class="col">
-              <p class="small"><strong>AWS Console → VPC → Create VPC</strong></p>
-              <ul class="small">
-                <li><strong>VPC and More</strong> 옵션 선택</li>
-                <li>IPv4 CIDR: <code>/25</code> 이상 확보</li>
-                <li>Availability Zone: 최소 <strong>2개</strong></li>
-                <li>Private Subnet: <strong>4개</strong> (각 <code>/26</code> 이상)</li>
-                <li>S3 Gateway Endpoint: <strong>포함</strong></li>
-                <li>DNS hostname/resolution: <strong>활성화</strong></li>
-              </ul>
-            </div>
-            <div class="col">
-              <div class="screenshot-placeholder">
-                <p>AWS VPC 생성 화면<br/>(VPC and More)</p>
-                <p class="placeholder-label">aws-general-02-vpc-create.png</p>
-              </div>
-            </div>
-          </div>
+          <p class="small"><strong>AWS Console → VPC → Create VPC</strong></p>
+          <ul class="small">
+            <li><strong>VPC and More</strong> 옵션 선택</li>
+            <li>IPv4 CIDR: <code>/25</code> 이상 확보</li>
+            <li>Availability Zone: 최소 <strong>2개</strong></li>
+            <li>Private Subnet: <strong>4개</strong> (각 <code>/26</code> 이상)</li>
+            <li>S3 Gateway Endpoint: <strong>포함</strong></li>
+            <li>DNS hostname/resolution: <strong>활성화</strong></li>
+          </ul>
           <div class="highlight-box info" style="margin-top: 12px;">
             <strong>Note:</strong> VPC ID와 Private Subnet ID를 반드시 기록해두세요.
           </div>
@@ -197,7 +306,9 @@
               </table>
             </div>
           </div>
-          <p class="tiny" style="margin-top: 12px; color: #888;">Security Group ID를 기록해두세요 (워크스페이스 생성 시 필요)</p>
+          <p class="tiny" style="margin-top: 12px; color: #888;">Security Group ID를 기록해두세요 (워크스페이스 생성 시 필요)<br/>
+            각 포트에 대한 자세한 설명: <a href="https://docs.databricks.com/aws/en/security/network/classic/customer-managed-vpc#security-groups" target="_blank" style="color: #0078D4;">Security Groups 공식 문서</a>
+          </p>
         </section>
 
         <section class="left-aligned">
@@ -234,36 +345,80 @@
                 <li>Block Public Access 활성화</li>
                 <li>Bucket Versioning 권장</li>
               </ul>
-              <p class="small" style="margin-top: 12px;"><strong>IAM Role 설정</strong></p>
+              <p class="small" style="margin-top: 8px;"><strong>Storage IAM Role</strong></p>
               <ul class="smaller">
-                <li>UC Master Role Trust Policy 추가</li>
+                <li>UC Master Role + Self-assume Trust Policy</li>
                 <li>S3 접근 Inline Policy 추가</li>
-                <li>Self-trusting Role ARN 추가</li>
               </ul>
             </div>
             <div class="col">
-              <div class="screenshot-placeholder">
-                <p>S3 Bucket 생성 + IAM Role 설정 화면</p>
-                <p class="placeholder-label">aws-general-05-storage-setup.png</p>
-              </div>
+              <p class="tiny"><strong>Trust Policy</strong> (Self-assume 패턴)</p>
+              <pre style="font-size: 0.42em;"><code class="language-json">{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": { "AWS": [
+      "arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL",
+      "arn:aws:iam::&lt;YOUR-ACCOUNT&gt;:role/&lt;THIS-ROLE&gt;"
+    ]},
+    "Action": "sts:AssumeRole",
+    "Condition": { "StringEquals": {
+      "sts:ExternalId": "&lt;DATABRICKS-ACCOUNT-ID&gt;"
+    }}
+  }]
+}</code></pre>
             </div>
+          </div>
+          <p class="tiny" style="margin-top: 4px; color: #888;">
+            <strong>414351767826</strong>: Databricks AWS Account ID &middot;
+            참고: <a href="https://docs.databricks.com/aws/en/admin/workspace/create-uc-workspace#create-a-storage-configuration" target="_blank" style="color: #0078D4;">Storage Configuration 공식 문서</a>
+          </p>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">5</span> S3 Bucket Access Inline Policy</h3>
+          <pre><code class="language-json" style="font-size: 0.55em;">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+      "Resource": "arn:aws:s3:::&lt;BUCKET&gt;/unity-catalog/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+      "Resource": "arn:aws:s3:::&lt;BUCKET&gt;"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["sts:AssumeRole"],
+      "Resource": ["arn:aws:iam::&lt;AWS-ACCOUNT-ID&gt;:role/&lt;THIS-ROLE-NAME&gt;"]
+    }
+  ]
+}</code></pre>
+          <div class="highlight-box info" style="margin-top: 4px;">
+            <strong>SSE-KMS 사용 시</strong> <code>kms:Decrypt</code>, <code>kms:Encrypt</code>, <code>kms:GenerateDataKey*</code> 권한 추가 필요
           </div>
         </section>
 
         <section class="left-aligned">
           <h3><span class="step-number">6</span> 워크스페이스 생성</h3>
           <p class="small">Account Console → Workspaces → <strong>Create a workspace</strong></p>
-          <ol class="small">
-            <li>Workspace name 및 Region 입력</li>
-            <li>Storage and Compute → <strong>Use your existing cloud account</strong></li>
-            <li><strong>Cloud Credentials</strong>: Cross-Account IAM Role ARN 입력</li>
-            <li><strong>Cloud Storage</strong>: S3 Bucket 이름 + Root Storage Role ARN 입력</li>
-            <li><strong>Network Configuration</strong>: VPC ID, Subnet IDs, Security Group ID 입력</li>
-            <li><strong>Create workspace</strong> 클릭</li>
-          </ol>
-          <div class="screenshot-placeholder" style="margin-top: 12px;">
-            <p>Workspace 생성 위저드 화면</p>
-            <p class="placeholder-label">aws-general-06-create-workspace.png</p>
+          <div class="columns">
+            <div class="col">
+              <ol class="small">
+                <li>Workspace name 및 Region 입력</li>
+                <li>Storage and Compute → <strong>Use your existing cloud account</strong></li>
+                <li><strong>Cloud Credentials</strong>: Cross-Account IAM Role ARN 입력</li>
+                <li><strong>Cloud Storage</strong>: S3 Bucket 이름 + Root Storage Role ARN 입력</li>
+                <li><strong>Network Configuration</strong>: VPC ID, Subnet IDs, Security Group ID 입력</li>
+                <li><strong>Create workspace</strong> 클릭</li>
+              </ol>
+            </div>
+            <div class="col">
+              <img src="assets/images/aws/aws-general-06-create-workspace.png" alt="Create Workspace" class="screenshot" />
+            </div>
           </div>
         </section>
 
@@ -278,10 +433,53 @@
               <li>Unity Catalog Metastore 연동 확인</li>
             </ul>
           </div>
-          <div class="screenshot-placeholder" style="margin-top: 16px;">
-            <p>워크스페이스 로그인 및 메인 화면</p>
-            <p class="placeholder-label">aws-general-07-workspace-login.png</p>
+          <div style="margin-top: 16px;">
+            <img src="assets/images/aws/aws-general-07-workspace-login.png" alt="Workspace Login" class="screenshot" />
           </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">TF</span> Terraform 예제 — AWS 일반 구성</h3>
+          <pre><code class="language-hcl" style="font-size: 0.42em;">provider "databricks" {
+  alias      = "mws"
+  host       = "https://accounts.cloud.databricks.com"
+  account_id = var.databricks_account_id
+}
+
+resource "databricks_mws_credentials" "this" {
+  provider         = databricks.mws
+  credentials_name = "${var.prefix}-creds"
+  role_arn         = aws_iam_role.cross_account.arn
+}
+
+resource "databricks_mws_storage_configurations" "this" {
+  provider                   = databricks.mws
+  account_id                 = var.databricks_account_id
+  storage_configuration_name = "${var.prefix}-storage"
+  bucket_name                = aws_s3_bucket.root_storage.bucket
+}
+
+resource "databricks_mws_networks" "this" {
+  provider           = databricks.mws
+  account_id         = var.databricks_account_id
+  network_name       = "${var.prefix}-network"
+  vpc_id             = aws_vpc.main.id
+  subnet_ids         = aws_subnet.private[*].id
+  security_group_ids = [aws_security_group.databricks.id]
+}
+
+resource "databricks_mws_workspaces" "this" {
+  provider                 = databricks.mws
+  account_id               = var.databricks_account_id
+  workspace_name           = var.prefix
+  aws_region               = var.region
+  credentials_id           = databricks_mws_credentials.this.credentials_id
+  storage_configuration_id = databricks_mws_storage_configurations.this.storage_configuration_id
+  network_id               = databricks_mws_networks.this.network_id
+}</code></pre>
+          <p class="tiny" style="color: #888;">
+            참고: <a href="https://docs.databricks.com/aws/en/dev-tools/terraform/" target="_blank" style="color: #0078D4;">Databricks Terraform Provider 공식 문서</a>
+          </p>
         </section>
       </section>
 
@@ -290,7 +488,7 @@
       <!-- ============================================================ -->
       <section>
         <section data-background-color="#232F3E">
-          <span class="csp-badge aws" style="font-size: 0.9em;">AWS</span>
+          <img src="assets/icons/aws/aws-logo-all-white.svg" alt="AWS" style="width: 120px;" />
           <h2 style="color: #fff; margin-top: 16px;">Backend Private Link</h2>
           <p style="color: #ccc; font-size: 0.65em;">Compute Plane → Control Plane 전용 연결</p>
         </section>
@@ -299,11 +497,52 @@
           <h3><span class="csp-badge aws">AWS</span> Backend Private Link 아키텍처</h3>
           <div class="architecture-diagram">
             <img src="assets/images/aws/aws-backend-pl-architecture.png" alt="AWS Backend Private Link Architecture"
-                 class="screenshot"
+                 class="screenshot" style="max-height: 480px; width: auto;"
                  onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>Backend Private Link 아키텍처</p><p class=\'placeholder-label\'>Compute Plane (Customer VPC) → VPC Endpoints → Control Plane</p></div>'" />
           </div>
           <div class="highlight-box info" style="margin-top: 12px;">
             <strong>목적:</strong> Compute Plane에서 Control Plane으로의 통신을 AWS 내부 네트워크(Private Link)를 통해 수행
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3>일반 구성 vs Backend Private Link</h3>
+          <div class="columns">
+            <div class="col">
+              <div class="option-box option-1" style="border-left-color: #888;">
+                <h4 class="small" style="margin-bottom: 8px;">일반 구성</h4>
+                <div style="text-align: center; margin: 12px 0; font-size: 0.55em; line-height: 2;">
+                  <code>Cluster</code>
+                  → <span style="background:#FF9900; color:#000; padding:2px 8px; border-radius:4px;">NAT GW</span>
+                  → <span style="background:#e74c3c; color:#fff; padding:2px 8px; border-radius:4px;">Public Internet</span>
+                  → <code>Control Plane</code>
+                </div>
+                <ul class="smaller">
+                  <li>트래픽이 <strong>퍼블릭 인터넷</strong>을 경유</li>
+                  <li>NAT Gateway 데이터 처리 비용 발생</li>
+                  <li>구성이 단순</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col">
+              <div class="option-box option-1" style="border-left-color: var(--sso-green);">
+                <h4 class="small" style="margin-bottom: 8px;">Backend Private Link</h4>
+                <div style="text-align: center; margin: 12px 0; font-size: 0.55em; line-height: 2;">
+                  <code>Cluster</code>
+                  → <span style="background:var(--sso-green); color:#fff; padding:2px 8px; border-radius:4px;">VPC Endpoint</span>
+                  → <span style="background:var(--sso-green); color:#fff; padding:2px 8px; border-radius:4px;">AWS Backbone</span>
+                  → <code>Control Plane</code>
+                </div>
+                <ul class="smaller">
+                  <li>트래픽이 <strong>AWS 내부 네트워크</strong>만 경유</li>
+                  <li>인터넷에 노출되지 않음</li>
+                  <li>VPC Endpoint 2개 추가 (REST API + SCC Relay)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="highlight-box" style="margin-top: 12px;">
+            <strong>핵심 차이:</strong> Compute → Control Plane 트래픽 경로가 퍼블릭 인터넷에서 AWS PrivateLink로 대체됩니다. 금융·의료 등 규제 산업에서 필수적입니다.
           </div>
         </section>
 
@@ -342,9 +581,8 @@
             <li><strong>databricks-endpoints-subnet</strong>: Databricks 서비스 (REST API, SCC) Endpoint용</li>
             <li class="fragment"><strong>aws-endpoints-subnet</strong> (Option 2만): STS, Kinesis Endpoint용</li>
           </ul>
-          <div class="screenshot-placeholder" style="margin-top: 16px;">
-            <p>VPC → Subnets → 서브넷 생성 화면</p>
-            <p class="placeholder-label">aws-backend-pl-01-endpoint-subnet.png</p>
+          <div style="margin-top: 16px;">
+            <img src="assets/images/aws/aws-backend-pl-01-endpoint-subnet.png" alt="Endpoint Subnet" class="screenshot" />
           </div>
         </section>
 
@@ -380,6 +618,9 @@
           <div class="highlight-box warning" style="margin-top: 8px;">
             <strong>AWS VPC Endpoint ID</strong>를 반드시 기록하세요! (Databricks Account Console 등록 시 필요)
           </div>
+          <p class="tiny" style="margin-top: 4px; color: #888;">
+            참고: <a href="https://docs.databricks.com/aws/en/security/network/classic/privatelink#create-the-workspace-vpc-endpoint" target="_blank" style="color: #0078D4;">Workspace VPC Endpoint 생성 공식 문서</a>
+          </p>
         </section>
 
         <section class="left-aligned">
@@ -387,13 +628,23 @@
           <p class="small">동일 절차로 <strong>Secure Cluster Connectivity (SCC) Relay</strong> Endpoint 생성</p>
           <ul class="small">
             <li>Service name: Regional <strong>SCC Relay</strong> 서비스명 입력</li>
-            <li>이름에 <code>scc</code> 포함 권장 (예: <code>databricks-us-west-2-scc-vpce</code>)</li>
+            <li>이름에 <code>scc</code> 포함 권장 (예: <code>databricks-ap-northeast-2-scc-vpce</code>)</li>
             <li>같은 서브넷 및 Security Group 사용</li>
           </ul>
-          <div class="screenshot-placeholder" style="margin-top: 16px;">
-            <p>VPC Endpoint 생성 화면 (SCC Relay)</p>
-            <p class="placeholder-label">aws-backend-pl-04-scc-endpoint.png</p>
+          <div class="highlight-box" style="margin-top: 12px;">
+            <strong>ap-northeast-2 (Seoul) PrivateLink Service Names:</strong>
+            <table style="margin-top: 8px; font-size: 0.7em;">
+              <thead><tr><th>Endpoint</th><th>Service Name</th></tr></thead>
+              <tbody>
+                <tr><td>Workspace (REST API)</td><td><code>com.amazonaws.vpce.ap-northeast-2.vpce-svc-0babb9bde64f34d7e</code></td></tr>
+                <tr><td>SCC Relay</td><td><code>com.amazonaws.vpce.ap-northeast-2.vpce-svc-0dc0e98a5800db5c4</code></td></tr>
+              </tbody>
+            </table>
           </div>
+          <p class="tiny" style="margin-top: 4px; color: #888;">
+            참고: <a href="https://docs.databricks.com/aws/en/security/network/classic/privatelink#create-the-scc-relay-vpc-endpoint" target="_blank" style="color: #0078D4;">SCC Relay Endpoint 공식 문서</a>
+            &middot; <a href="https://docs.databricks.com/aws/en/resources/ip-domain-region#privatelink" target="_blank" style="color: #0078D4;">전체 리전별 서비스명</a>
+          </p>
         </section>
 
         <section class="left-aligned">
@@ -428,9 +679,8 @@
             <li>REST API Endpoint의 <strong>AWS VPC Endpoint ID</strong> 등록</li>
             <li>SCC Relay Endpoint의 <strong>AWS VPC Endpoint ID</strong> 등록</li>
           </ol>
-          <div class="screenshot-placeholder" style="margin-top: 16px;">
-            <p>Account Console → VPC Endpoints 등록 화면</p>
-            <p class="placeholder-label">aws-backend-pl-06-register-endpoint.png</p>
+          <div style="margin-top: 16px;">
+            <img src="assets/images/aws/aws-backend-pl-06-register-endpoint.png" alt="Register VPC Endpoint" class="screenshot" />
           </div>
         </section>
 
@@ -442,9 +692,96 @@
             <li>새 워크스페이스 생성 시 해당 Network Config 선택</li>
             <li>또는 기존 워크스페이스에 Network Config 업데이트 (워크스페이스 재시작 필요)</li>
           </ul>
-          <div class="highlight-box info" style="margin-top: 12px;">
-            <strong>확인:</strong> 클러스터 시작 후 Control Plane 통신이 Private Link를 통해 이루어지는지 확인하세요.
+          <div class="highlight-box warning" style="margin-top: 12px;">
+            <strong>주의:</strong> 기존 워크스페이스에 Network Config를 업데이트하면 워크스페이스가 재시작되며, 실행 중인 클러스터가 모두 종료됩니다.
           </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">✓</span> Private Link 연결 확인</h3>
+          <p class="small">클러스터 시작 후 아래 방법으로 Backend Private Link가 정상 작동하는지 검증합니다.</p>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>1. VPC Flow Logs 확인</strong></p>
+              <ul class="smaller">
+                <li>VPC Flow Logs 활성화 후 클러스터 시작</li>
+                <li>클러스터 노드 → VPC Endpoint ENI로의 트래픽 확인</li>
+                <li>NAT Gateway를 경유하는 443/8443-8451 트래픽이 <strong>없어야</strong> 정상</li>
+              </ul>
+              <p class="small" style="margin-top: 12px;"><strong>2. Workspace Status API</strong></p>
+              <pre style="font-size: 0.5em;"><code class="language-bash">curl -s https://&lt;workspace-url&gt;/api/2.0/workspace/get-status \
+  -H "Authorization: Bearer &lt;token&gt;" | jq .</code></pre>
+            </div>
+            <div class="col">
+              <p class="small"><strong>3. 클러스터 내 DNS 확인</strong></p>
+              <p class="tiny">노트북에서 실행:</p>
+              <pre style="font-size: 0.5em;"><code class="language-python">import socket
+# Control Plane endpoint resolve
+host = "&lt;workspace-url&gt;"
+ip = socket.getaddrinfo(host, 443)[0][4][0]
+print(f"{host} → {ip}")
+# Private IP (10.x 또는 172.x)면 PL 정상</code></pre>
+              <div class="highlight-box info" style="margin-top: 12px;">
+                <strong>판별 기준:</strong> resolve된 IP가 <strong>Private IP</strong> (10.x, 172.16-31.x)이면 Private Link 경유, Public IP이면 인터넷 경유
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">TF</span> Terraform 예제 — AWS Backend Private Link</h3>
+          <pre><code class="language-hcl" style="font-size: 0.40em;"># VPC Endpoint 전용 보안그룹
+resource "aws_security_group" "vpce" {
+  vpc_id = aws_vpc.main.id
+  ingress { from_port = 443;  to_port = 443;  protocol = "tcp"; cidr_blocks = [aws_vpc.main.cidr_block] }
+  ingress { from_port = 6666; to_port = 6666; protocol = "tcp"; cidr_blocks = [aws_vpc.main.cidr_block] }
+}
+
+# REST API VPC Endpoint
+resource "aws_vpc_endpoint" "workspace" {
+  vpc_id             = aws_vpc.main.id
+  service_name       = "com.amazonaws.vpce.ap-northeast-2.vpce-svc-0babb9bde64f34d7e"
+  vpc_endpoint_type  = "Interface"
+  security_group_ids = [aws_security_group.vpce.id]
+  subnet_ids         = [aws_subnet.vpce.id]
+  private_dns_enabled = true
+}
+
+# SCC Relay VPC Endpoint
+resource "aws_vpc_endpoint" "relay" {
+  vpc_id             = aws_vpc.main.id
+  service_name       = "com.amazonaws.vpce.ap-northeast-2.vpce-svc-0dc0e98a5800db5c4"
+  vpc_endpoint_type  = "Interface"
+  security_group_ids = [aws_security_group.vpce.id]
+  subnet_ids         = [aws_subnet.vpce.id]
+  private_dns_enabled = true
+}
+
+# Databricks에 등록
+resource "databricks_mws_vpc_endpoint" "workspace" {
+  provider            = databricks.mws
+  account_id          = var.databricks_account_id
+  aws_vpc_endpoint_id = aws_vpc_endpoint.workspace.id
+  vpc_endpoint_name   = "${var.prefix}-workspace-vpce"
+  region              = var.region
+}
+
+resource "databricks_mws_vpc_endpoint" "relay" {
+  provider            = databricks.mws
+  account_id          = var.databricks_account_id
+  aws_vpc_endpoint_id = aws_vpc_endpoint.relay.id
+  vpc_endpoint_name   = "${var.prefix}-relay-vpce"
+  region              = var.region
+}
+
+# Network에 VPC Endpoint 연결
+resource "databricks_mws_networks" "this" {
+  # ... 기존 네트워크 설정 ...
+  vpc_endpoints {
+    rest_api        = [databricks_mws_vpc_endpoint.workspace.vpc_endpoint_id]
+    dataplane_relay = [databricks_mws_vpc_endpoint.relay.vpc_endpoint_id]
+  }
+}</code></pre>
         </section>
       </section>
 
@@ -453,7 +790,7 @@
       <!-- ============================================================ -->
       <section>
         <section data-background-color="#232F3E">
-          <span class="csp-badge aws" style="font-size: 0.9em;">AWS</span>
+          <img src="assets/icons/aws/aws-logo-all-white.svg" alt="AWS" style="width: 120px;" />
           <h2 style="color: #fff; margin-top: 16px;">Frontend Private Link</h2>
           <p style="color: #ccc; font-size: 0.65em;">사용자 → Control Plane 전용 연결 (Transit VPC)</p>
         </section>
@@ -462,7 +799,7 @@
           <h3><span class="csp-badge aws">AWS</span> Frontend Private Link 아키텍처</h3>
           <div class="architecture-diagram">
             <img src="assets/images/aws/aws-frontend-pl-architecture.png" alt="AWS Frontend Private Link Architecture"
-                 class="screenshot"
+                 class="screenshot" style="max-height: 480px; width: auto;"
                  onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>Frontend Private Link 아키텍처</p><p class=\'placeholder-label\'>User (On-prem) → Transit VPC → VPC Endpoint → Control Plane</p></div>'" />
           </div>
           <div class="highlight-box info" style="margin-top: 12px;">
@@ -513,9 +850,8 @@
             <li><strong>Frontend-REST-API-endpoint</strong> AWS VPC Endpoint ID 입력</li>
             <li>등록 완료</li>
           </ol>
-          <div class="screenshot-placeholder" style="margin-top: 16px;">
-            <p>Account Console → VPC Endpoints 등록 (Frontend)</p>
-            <p class="placeholder-label">aws-frontend-pl-02-register-endpoint.png</p>
+          <div style="margin-top: 16px;">
+            <img src="assets/images/aws/aws-frontend-pl-02-register-endpoint.png" alt="Register Frontend Endpoint" class="screenshot" style="max-height: 380px; width: auto;" />
           </div>
         </section>
 
@@ -532,6 +868,9 @@
             </li>
             <li>워크스페이스에 이 설정을 적용하여 Frontend PL 활성화</li>
           </ul>
+          <div style="margin-top: 12px;">
+            <img src="assets/images/aws/aws-frontend-pl-03-private-access.png" alt="Private Access Settings" class="screenshot" style="max-height: 350px; width: auto;" />
+          </div>
         </section>
 
         <section class="left-aligned">
@@ -547,9 +886,9 @@
               </ul>
             </div>
             <div class="col">
-              <div class="screenshot-placeholder">
-                <p>Route53 Private Hosted Zone 설정</p>
-                <p class="placeholder-label">aws-frontend-pl-04-dns-config.png</p>
+              <div class="highlight-box info">
+                <strong>DNS 해석 흐름:</strong><br/>
+                <span class="tiny">사용자 → On-prem DNS → Route53 Private Hosted Zone → Frontend VPC Endpoint Private IP</span>
               </div>
             </div>
           </div>
@@ -567,6 +906,44 @@
             </ol>
           </div>
         </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">TF</span> Terraform 예제 — AWS Frontend Private Link</h3>
+          <pre><code class="language-hcl" style="font-size: 0.42em;"># Frontend VPC Endpoint (Transit VPC에 생성)
+resource "aws_vpc_endpoint" "frontend" {
+  vpc_id             = aws_vpc.transit.id
+  service_name       = "com.amazonaws.vpce.ap-northeast-2.vpce-svc-0babb9bde64f34d7e"
+  vpc_endpoint_type  = "Interface"
+  security_group_ids = [aws_security_group.frontend_vpce.id]
+  subnet_ids         = [aws_subnet.transit_private.id]
+  private_dns_enabled = true
+}
+
+# Databricks에 Frontend Endpoint 등록
+resource "databricks_mws_vpc_endpoint" "frontend" {
+  provider            = databricks.mws
+  account_id          = var.databricks_account_id
+  aws_vpc_endpoint_id = aws_vpc_endpoint.frontend.id
+  vpc_endpoint_name   = "${var.prefix}-frontend-vpce"
+  region              = var.region
+}
+
+# Private Access Settings
+resource "databricks_mws_private_access_settings" "this" {
+  provider                     = databricks.mws
+  account_id                   = var.databricks_account_id
+  private_access_settings_name = "${var.prefix}-pas"
+  region                       = var.region
+  public_access_enabled        = false  # true = 하이브리드
+  private_access_level         = "ACCOUNT"
+}
+
+# Workspace에 PAS 적용
+resource "databricks_mws_workspaces" "this" {
+  # ... 기존 설정 ...
+  private_access_settings_id = databricks_mws_private_access_settings.this.private_access_settings_id
+}</code></pre>
+        </section>
       </section>
 
       <!-- ============================================================ -->
@@ -574,7 +951,7 @@
       <!-- ============================================================ -->
       <section>
         <section data-background-color="#0078D4">
-          <span class="csp-badge azure" style="font-size: 0.9em;">Azure</span>
+          <img src="assets/icons/azure/azure-logo-white.svg" alt="Azure" style="width: 80px;" />
           <h2 style="color: #fff; margin-top: 16px;">일반 워크스페이스 구성</h2>
           <p style="color: #ddd; font-size: 0.65em;">VNet &middot; NSG &middot; Storage &middot; Workspace 배포</p>
         </section>
@@ -607,16 +984,25 @@
 
         <section class="left-aligned">
           <h3><span class="step-number">1</span> Unity Catalog Metastore 설정</h3>
-          <ul class="small">
-            <li><strong>Access Connector for Azure Databricks</strong> 리소스 생성</li>
-            <li><strong>ADLS Gen2 Storage Account</strong> 생성 (UC 메타데이터용)</li>
-            <li>Access Connector에 Storage Blob Data Contributor 역할 부여</li>
-            <li>Account Console → Catalog → <strong>Create metastore</strong></li>
-            <li>Access Connector Resource ID 입력</li>
-          </ul>
-          <div class="screenshot-placeholder" style="margin-top: 16px;">
-            <p>Azure Portal - Access Connector 생성 화면</p>
-            <p class="placeholder-label">azure-general-01-access-connector.png</p>
+          <div class="columns">
+            <div class="col">
+              <ul class="small">
+                <li><strong>Access Connector for Azure Databricks</strong> 리소스 생성</li>
+                <li><strong>ADLS Gen2 Storage Account</strong> 생성 (UC 메타데이터용)</li>
+                <li>Access Connector에 <strong>Storage Blob Data Contributor</strong> 역할 부여</li>
+                <li>Account Console → Catalog → <strong>Create metastore</strong></li>
+                <li>Access Connector Resource ID 입력</li>
+              </ul>
+              <div class="highlight-box info" style="margin-top: 12px;">
+                <strong>Managed Identity 권장:</strong> Service Principal 대비 네트워크 규칙으로 보호된 Storage Account 접근 가능, Secret 관리 불필요
+              </div>
+              <p class="tiny" style="margin-top: 8px; color: #888;">
+                참고: <a href="https://learn.microsoft.com/en-us/azure/databricks/connect/unity-catalog/cloud-storage/storage-credentials" target="_blank" style="color: #0078D4;">Azure Storage Credentials 공식 문서</a>
+              </p>
+            </div>
+            <div class="col">
+              <img src="assets/images/azure/azure-general-01-uc-metastore.png" alt="UC Metastore Setup" class="screenshot" />
+            </div>
           </div>
         </section>
 
@@ -635,10 +1021,7 @@
               </ul>
             </div>
             <div class="col">
-              <div class="screenshot-placeholder">
-                <p>Azure VNet 생성 화면<br/>(서브넷 + Delegation)</p>
-                <p class="placeholder-label">azure-general-02-vnet-create.png</p>
-              </div>
+              <img src="assets/images/azure/azure-general-02-vnet-create.png" alt="VNet Create" class="screenshot" />
             </div>
           </div>
         </section>
@@ -667,9 +1050,8 @@
             <li>VNet, Public Subnet, Private Subnet 선택</li>
             <li><strong>Review + Create</strong></li>
           </ol>
-          <div class="screenshot-placeholder" style="margin-top: 12px;">
-            <p>Azure Databricks Workspace 배포 화면</p>
-            <p class="placeholder-label">azure-general-04-deploy-workspace.png</p>
+          <div style="margin-top: 12px;">
+            <img src="assets/images/azure/azure-general-04-deploy-workspace.png" alt="Deploy Workspace" class="screenshot" style="max-height: 380px; width: auto;" />
           </div>
         </section>
 
@@ -686,6 +1068,45 @@
             </ul>
           </div>
         </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">TF</span> Terraform 예제 — Azure 일반 구성</h3>
+          <pre><code class="language-hcl" style="font-size: 0.42em;"># VNet Injection 구성
+resource "azurerm_databricks_workspace" "this" {
+  name                        = "${var.prefix}-workspace"
+  resource_group_name         = azurerm_resource_group.this.name
+  location                    = azurerm_resource_group.this.location
+  sku                         = "premium"
+  managed_resource_group_name = "${var.prefix}-managed-rg"
+
+  custom_parameters {
+    no_public_ip        = true
+    virtual_network_id  = azurerm_virtual_network.this.id
+    public_subnet_name  = azurerm_subnet.public.name   # Delegation: Microsoft.Databricks/workspaces
+    private_subnet_name = azurerm_subnet.private.name   # Delegation: Microsoft.Databricks/workspaces
+    public_subnet_network_security_group_association_id  = azurerm_subnet_network_security_group_association.public.id
+    private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private.id
+  }
+}
+
+# Unity Catalog 용 Access Connector
+resource "azurerm_databricks_access_connector" "this" {
+  name                = "${var.prefix}-access-connector"
+  resource_group_name = azurerm_resource_group.this.name
+  location            = azurerm_resource_group.this.location
+  identity { type = "SystemAssigned" }
+}
+
+# Storage Blob Data Contributor 역할 부여
+resource "azurerm_role_assignment" "storage" {
+  scope                = azurerm_storage_account.unity_catalog.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_databricks_access_connector.this.identity[0].principal_id
+}</code></pre>
+          <p class="tiny" style="color: #888;">
+            참고: <a href="https://learn.microsoft.com/en-us/azure/databricks/dev-tools/terraform/azure-workspace" target="_blank" style="color: #0078D4;">Azure Databricks Terraform 공식 문서</a>
+          </p>
+        </section>
       </section>
 
       <!-- ============================================================ -->
@@ -693,7 +1114,7 @@
       <!-- ============================================================ -->
       <section>
         <section data-background-color="#0078D4">
-          <span class="csp-badge azure" style="font-size: 0.9em;">Azure</span>
+          <img src="assets/icons/azure/azure-logo-white.svg" alt="Azure" style="width: 80px;" />
           <h2 style="color: #fff; margin-top: 16px;">Backend Private Link</h2>
           <p style="color: #ddd; font-size: 0.65em;">Data Plane → Control Plane Private Endpoint 연결</p>
         </section>
@@ -702,7 +1123,7 @@
           <h3><span class="csp-badge azure">Azure</span> Backend Private Link 아키텍처</h3>
           <div class="architecture-diagram">
             <img src="assets/images/azure/azure-backend-pl-architecture.png" alt="Azure Backend Private Link Architecture"
-                 class="screenshot"
+                 class="screenshot" style="max-height: 480px; width: auto;"
                  onerror="this.outerHTML='<div class=\'screenshot-placeholder\'><p>Azure Backend Private Link 아키텍처</p><p class=\'placeholder-label\'>Data Plane (Customer VNet) → Private Endpoints → Control Plane</p></div>'" />
           </div>
         </section>
@@ -743,10 +1164,6 @@
             <strong>자동 DNS:</strong> Private Endpoint 생성 시 "Integrate with private DNS zone" 옵션을 활성화하면
             DNS Zone 생성 및 레코드 등록이 자동으로 처리됩니다.
           </div>
-          <div class="screenshot-placeholder" style="margin-top: 12px;">
-            <p>Private DNS Zone → Virtual network links 화면</p>
-            <p class="placeholder-label">azure-backend-pl-02-dns-zone.png</p>
-          </div>
         </section>
 
         <section class="left-aligned">
@@ -762,6 +1179,47 @@
             Connection State가 <strong>Succeeded</strong>인지 확인하세요.
           </div>
         </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">TF</span> Terraform 예제 — Azure Backend Private Link</h3>
+          <pre><code class="language-hcl" style="font-size: 0.40em;">resource "azurerm_databricks_workspace" "this" {
+  # ... 기존 VNet Injection 설정 ...
+  public_network_access_enabled           = true  # Backend-only면 true 유지 가능
+  network_security_group_rules_required   = "NoAzureDatabricksRules"
+}
+
+# Backend Private Endpoint
+resource "azurerm_private_endpoint" "backend" {
+  name                = "${var.prefix}-backend-pe"
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  subnet_id           = azurerm_subnet.private_endpoint.id
+
+  private_service_connection {
+    name                           = "${var.prefix}-backend-psc"
+    private_connection_resource_id = azurerm_databricks_workspace.this.id
+    is_manual_connection           = false
+    subresource_names              = ["databricks_ui_api"]
+  }
+  private_dns_zone_group {
+    name                 = "default"
+    private_dns_zone_ids = [azurerm_private_dns_zone.databricks.id]
+  }
+}
+
+# Private DNS Zone
+resource "azurerm_private_dns_zone" "databricks" {
+  name                = "privatelink.azuredatabricks.net"
+  resource_group_name = azurerm_resource_group.this.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "this" {
+  name                  = "${var.prefix}-dns-link"
+  resource_group_name   = azurerm_resource_group.this.name
+  private_dns_zone_name = azurerm_private_dns_zone.databricks.name
+  virtual_network_id    = azurerm_virtual_network.this.id
+}</code></pre>
+        </section>
       </section>
 
       <!-- ============================================================ -->
@@ -769,7 +1227,7 @@
       <!-- ============================================================ -->
       <section>
         <section data-background-color="#0078D4">
-          <span class="csp-badge azure" style="font-size: 0.9em;">Azure</span>
+          <img src="assets/icons/azure/azure-logo-white.svg" alt="Azure" style="width: 80px;" />
           <h2 style="color: #fff; margin-top: 16px;">Frontend Private Link</h2>
           <p style="color: #ddd; font-size: 0.65em;">사용자 → Workspace Private Endpoint 접속</p>
         </section>
@@ -804,10 +1262,6 @@
             <li>Sub-resource: <code>databricks_ui_api</code></li>
             <li>VNet/Subnet: <strong>Transit VNet</strong>의 PE 서브넷</li>
           </ul>
-          <div class="screenshot-placeholder" style="margin-top: 16px;">
-            <p>Frontend Private Endpoint 생성 화면</p>
-            <p class="placeholder-label">azure-frontend-pl-02-frontend-pe.png</p>
-          </div>
         </section>
 
         <section class="left-aligned">
@@ -848,6 +1302,351 @@
 $ nslookup adb-1234567890123456.16.azuredatabricks.net
 Address: 10.0.1.4  # Private IP로 해석됨</code></pre>
         </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">TF</span> Terraform 예제 — Azure Frontend Private Link</h3>
+          <pre><code class="language-hcl" style="font-size: 0.38em;"># 워크스페이스 — public access 비활성화
+resource "azurerm_databricks_workspace" "this" {
+  # ... 기존 VNet Injection 설정 ...
+  public_network_access_enabled           = false  # Frontend PL: 공용 접근 차단
+  network_security_group_rules_required   = "NoAzureDatabricksRules"
+}
+
+# Frontend PE — Transit VNet에 배치
+resource "azurerm_private_endpoint" "frontend" {
+  name                = "${var.prefix}-frontend-pe"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.transit.name
+  subnet_id           = azurerm_subnet.transit_pe.id
+
+  private_service_connection {
+    name                           = "${var.prefix}-frontend-psc"
+    private_connection_resource_id = azurerm_databricks_workspace.this.id
+    is_manual_connection           = false
+    subresource_names              = ["databricks_ui_api"]
+  }
+  private_dns_zone_group {
+    name                 = "default"
+    private_dns_zone_ids = [azurerm_private_dns_zone.databricks.id]
+  }
+}
+
+# 인증 전용 워크스페이스 (browser_authentication PE 용)
+resource "azurerm_databricks_workspace" "web_auth" {
+  name                            = "WEB-AUTH-DO-NOT-DELETE-${var.region}"
+  resource_group_name             = azurerm_resource_group.this.name
+  location                        = var.location
+  sku                             = "premium"
+  public_network_access_enabled   = false
+  network_security_group_rules_required = "NoAzureDatabricksRules"
+  custom_parameters { /* VNet Injection */ }
+}
+
+# Browser Authentication PE — Transit VNet에 배치
+resource "azurerm_private_endpoint" "browser_auth" {
+  name                = "${var.prefix}-browser-auth-pe"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.transit.name
+  subnet_id           = azurerm_subnet.transit_pe.id
+  private_service_connection {
+    name                           = "${var.prefix}-browser-auth"
+    private_connection_resource_id = azurerm_databricks_workspace.web_auth.id
+    is_manual_connection           = false
+    subresource_names              = ["browser_authentication"]
+  }
+  private_dns_zone_group {
+    name                 = "default"
+    private_dns_zone_ids = [azurerm_private_dns_zone.databricks.id]
+  }
+}</code></pre>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SSO CONFIGURATION -->
+      <!-- ============================================================ -->
+      <section>
+        <section data-background-color="#2E7D32">
+          <h2 style="color: #fff; margin-top: 16px;">SSO 설정</h2>
+          <p style="color: #ddd; font-size: 0.65em;">AWS IAM Identity Center &middot; Azure Entra ID &middot; Okta</p>
+          <p class="tiny" style="color: #aaa; margin-top: 20px;">
+            Account-level SSO &middot; SAML 2.0 / OIDC &middot; SCIM Provisioning &middot; Unified Login
+          </p>
+        </section>
+
+        <!-- AWS IAM Identity Center -->
+        <section class="left-aligned">
+          <h3><span class="csp-badge aws">AWS</span> IAM Identity Center (SSO)</h3>
+          <div class="highlight-box info">
+            <strong>개요:</strong> AWS IAM Identity Center (구 AWS SSO)를 Databricks의 Identity Provider로 설정하여
+            <strong>SAML 2.0</strong> 기반 Single Sign-On을 구성합니다.
+          </div>
+          <ul class="small">
+            <li><strong>Account-level SSO</strong>: 모든 워크스페이스에 일괄 적용 (권장)</li>
+            <li><strong>Unified Login</strong>: Account SSO 설정을 워크스페이스에 자동 전파
+              <br/><span class="tiny">(2023.06.21 이후 생성 계정은 기본 활성화)</span></li>
+            <li><strong>JIT Provisioning</strong>: 첫 SSO 로그인 시 Databricks 사용자 자동 생성
+              <br/><span class="tiny">(2025.05.01 이후 생성 계정은 기본 활성화)</span></li>
+            <li>SCIM Provisioning으로 사용자/그룹 사전 동기화 가능</li>
+          </ul>
+          <p class="tiny" style="margin-top: 8px; color: #888;">
+            참고: <a href="https://docs.databricks.com/aws/en/security/auth/single-sign-on/aws-iam" target="_blank" style="color: #0078D4;">공식 문서</a>
+          </p>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> IAM Identity Center 앱 등록</h3>
+          <ol class="small">
+            <li>AWS Console → <strong>IAM Identity Center</strong> → Applications → <strong>Add application</strong></li>
+            <li>Application catalog에서 <strong>Databricks</strong> 검색 선택</li>
+            <li><strong>IAM Identity Center sign-in URL</strong>과 <strong>Public Certificate</strong>를 저장/다운로드</li>
+            <li>Application metadata → <strong>Manual entry</strong> 선택:
+              <ul class="smaller">
+                <li><strong>Application ACS URL</strong>: Databricks Account Console에서 제공하는 <em>Redirect URL</em></li>
+                <li><strong>Application SAML audience</strong>: 동일한 <em>Redirect URL</em></li>
+              </ul>
+            </li>
+          </ol>
+          <div class="highlight-box warning" style="margin-top: 8px;">
+            <strong>주의:</strong> ACS URL / SAML audience에는 Databricks Account Console의 <strong>Security → Authentication → Manage</strong>에서
+            제공하는 Redirect URL을 사용하세요. 하드코딩된 URL이 아닙니다.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> Databricks Account Console 설정</h3>
+          <ol class="small">
+            <li>Account Console → <strong>Security</strong> → <strong>Authentication</strong> → <strong>Manage</strong></li>
+            <li><strong>"Single sign-on with my identity provider"</strong> 선택</li>
+            <li>Identity protocol: <strong>SAML 2.0</strong> 선택</li>
+            <li>필드 입력:
+              <ul class="smaller">
+                <li><strong>Single Sign-On URL</strong>: IAM Identity Center의 sign-in URL</li>
+                <li><strong>Identity Provider Entity ID</strong>: IAM Identity Center의 sign-in URL</li>
+                <li><strong>x.509 Certificate</strong>: 다운로드한 인증서 전체 (<code>-----BEGIN/END CERTIFICATE-----</code> 포함)</li>
+              </ul>
+            </li>
+            <li>Databricks Redirect URL을 복사 → IAM Identity Center에 붙여넣기</li>
+            <li><strong>Save</strong> → <strong>Test SSO</strong> → <strong>Enable SSO</strong></li>
+          </ol>
+          <div class="screenshot-placeholder" style="margin-top: 12px;">
+            <p>Account Console → Security → Authentication 설정 화면</p>
+            <p class="placeholder-label">sso-01-aws-account-console.png</p>
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">3</span> User Provisioning</h3>
+          <div class="columns">
+            <div class="col">
+              <div class="option-box option-1">
+                <h4 class="small">JIT Provisioning</h4>
+                <ul class="smaller">
+                  <li>첫 SSO 로그인 시 사용자 자동 생성</li>
+                  <li>별도 설정 불필요 (기본 활성화)</li>
+                  <li>그룹 동기화는 미지원</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col">
+              <div class="option-box option-2">
+                <h4 class="small">SCIM Provisioning (권장)</h4>
+                <ul class="smaller">
+                  <li>Account Console → User provisioning → Enable</li>
+                  <li>SCIM Token + Endpoint URL 생성</li>
+                  <li>IAM IC → Application → Provisioning에 입력</li>
+                  <li>사용자 + <strong>그룹</strong> 자동 동기화</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>Unified Login:</strong> Account-level SSO를 활성화하면 모든 워크스페이스에 자동 적용됩니다.
+            개별 워크스페이스 SSO 설정은 Unified Login이 비활성화된 경우에만 필요합니다.
+          </div>
+        </section>
+
+        <!-- Azure Entra ID -->
+        <section class="left-aligned">
+          <h3><span class="csp-badge azure">Azure</span> Entra ID (구 Azure AD) SSO</h3>
+          <div class="highlight-box info">
+            <strong>개요:</strong> Microsoft Entra ID를 Databricks의 Identity Provider로 설정합니다.
+            <strong>OIDC</strong>와 <strong>SAML 2.0</strong> 두 가지 프로토콜을 모두 지원합니다.
+          </div>
+          <ul class="small">
+            <li>Azure Databricks는 기본 Entra ID 통합 제공 (워크스페이스 레벨)</li>
+            <li><strong>Account-level SSO</strong>는 별도 Enterprise Application 등록 필요</li>
+            <li>Conditional Access Policy로 MFA, 위치 기반 제어 가능</li>
+            <li>OIDC 선택 시 더 간단한 설정 가능</li>
+          </ul>
+          <p class="tiny" style="margin-top: 8px; color: #888;">
+            참고: <a href="https://docs.databricks.com/aws/en/security/auth/single-sign-on/azure-ad" target="_blank" style="color: #0078D4;">공식 문서</a>
+          </p>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> SAML 2.0: Enterprise Application 등록</h3>
+          <ol class="small">
+            <li>Azure Portal → <strong>Entra ID</strong> → <strong>Enterprise applications</strong></li>
+            <li><strong>New application</strong> → "Integrate any other application you don't find in the gallery"</li>
+            <li>Properties → <strong>Assignment required: No</strong></li>
+            <li>Single sign-on → <strong>SAML</strong> 선택</li>
+            <li>Basic SAML Configuration:
+              <ul class="smaller">
+                <li><strong>Entity ID</strong>: Databricks Account Console에서 제공하는 <em>SAML URL</em></li>
+                <li><strong>Reply URL</strong>: 동일한 <em>SAML URL</em></li>
+              </ul>
+            </li>
+            <li>SAML Signing Certificate → <strong>Sign SAML response and assertion</strong> (SHA-256)</li>
+          </ol>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> Attribute Claims &amp; Databricks 설정</h3>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>Entra ID Attribute Mappings</strong></p>
+              <table>
+                <thead><tr><th>Claim</th><th>Value</th></tr></thead>
+                <tbody>
+                  <tr><td>Unique User ID (Name ID)</td><td><code>user.mail</code></td></tr>
+                </tbody>
+              </table>
+              <p class="smaller" style="margin-top: 8px;">x.509 Certificate (Base64) 다운로드</p>
+            </div>
+            <div class="col">
+              <p class="small"><strong>Databricks Account Console</strong></p>
+              <ul class="smaller">
+                <li>Security → Authentication → Manage</li>
+                <li><strong>Single Sign-On URL</strong>: Azure Login URL</li>
+                <li><strong>Entity ID</strong>: Microsoft Entra ID Identifier</li>
+                <li><strong>x.509 Certificate</strong>: 다운로드한 인증서</li>
+                <li>Test SSO → Enable SSO</li>
+              </ul>
+            </div>
+          </div>
+          <div class="highlight-box" style="margin-top: 12px;">
+            <strong>OIDC 대안:</strong> SAML 대신 OIDC를 선택하면 App Registration에서 Client ID, Client Secret, Issuer URL만 입력하면 됩니다.
+          </div>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">3</span> SCIM Provisioning &amp; Conditional Access</h3>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>SCIM 설정</strong></p>
+              <ol class="smaller">
+                <li>Enterprise App → Provisioning → <strong>Automatic</strong></li>
+                <li><strong>Tenant URL</strong>: Databricks SCIM Endpoint</li>
+                <li><strong>Secret Token</strong>: Databricks SCIM Token</li>
+                <li>Mappings 확인 → Start provisioning</li>
+              </ol>
+            </div>
+            <div class="col">
+              <p class="small"><strong>Conditional Access (선택)</strong></p>
+              <ul class="smaller">
+                <li>Entra ID → Security → Conditional Access</li>
+                <li>New policy → Databricks App 선택</li>
+                <li>MFA 강제, IP 범위 제한</li>
+                <li>Compliant Device만 허용 등</li>
+              </ul>
+            </div>
+          </div>
+          <div class="highlight-box info" style="margin-top: 12px;">
+            <strong>Custom Username Claim:</strong> 기본은 <code>email</code>. 커스텀 claim 사용 시
+            App Manifest에서 <code>"acceptMappedClaims": true</code> 설정이 필요합니다.
+          </div>
+        </section>
+
+        <!-- Okta -->
+        <section class="left-aligned">
+          <h3>Okta SSO 연동</h3>
+          <div class="highlight-box info">
+            <strong>개요:</strong> Okta를 3rd-party Identity Provider로 사용하여 Databricks에 SSO를 구성합니다.
+            <strong>OIDC</strong>와 <strong>SAML 2.0</strong> 모두 지원하며, AWS / Azure 모든 환경에 적용 가능합니다.
+          </div>
+          <ul class="small">
+            <li>Okta Integration Network (OIN)에 <strong>Databricks</strong> 앱 카탈로그 제공</li>
+            <li>SAML 2.0 / OIDC 기반 SSO + SCIM Provisioning 지원</li>
+            <li>Account-level 또는 Workspace-level SSO 모두 가능</li>
+          </ul>
+          <p class="tiny" style="margin-top: 8px; color: #888;">
+            참고: <a href="https://docs.databricks.com/aws/en/security/auth/single-sign-on/okta" target="_blank" style="color: #0078D4;">공식 문서</a>
+          </p>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">1</span> Okta Application 설정 (SAML)</h3>
+          <ol class="small">
+            <li>Okta Admin → <strong>Applications</strong> → <strong>Browse App Catalog</strong></li>
+            <li><strong>Databricks</strong> 검색 → <strong>Add Integration</strong></li>
+            <li>Sign-On → SAML 2.0:
+              <ul class="smaller">
+                <li><strong>Databricks SAML URL</strong> 입력 (Account Console에서 복사)</li>
+                <li><strong>Application username format</strong>: <code>Email</code></li>
+              </ul>
+            </li>
+            <li>Setup Instructions에서 복사:
+              <ul class="smaller">
+                <li><strong>Identity Provider Single Sign-On URL</strong></li>
+                <li><strong>Identity Provider Issuer</strong></li>
+                <li><strong>x.509 Certificate</strong></li>
+              </ul>
+            </li>
+            <li>Okta "Everyone" 그룹 할당 (또는 특정 그룹만)</li>
+          </ol>
+        </section>
+
+        <section class="left-aligned">
+          <h3><span class="step-number">2</span> Databricks 연동 &amp; SCIM</h3>
+          <div class="columns">
+            <div class="col">
+              <p class="small"><strong>SSO 설정</strong></p>
+              <ul class="smaller">
+                <li>Account Console → Security → Authentication</li>
+                <li>SAML 2.0 선택</li>
+                <li>Okta의 SSO URL, Entity ID, Certificate 입력</li>
+                <li>Redirect URL을 Okta에 복사</li>
+                <li>Test SSO → Enable</li>
+              </ul>
+            </div>
+            <div class="col">
+              <p class="small"><strong>SCIM Provisioning</strong></p>
+              <ul class="smaller">
+                <li>Okta → Provisioning → API Integration</li>
+                <li>SCIM Endpoint URL + Token 입력</li>
+                <li>Push Groups로 그룹 동기화</li>
+                <li>사용자 할당 → 자동 프로비저닝</li>
+              </ul>
+            </div>
+          </div>
+          <div class="highlight-box warning" style="margin-top: 12px;">
+            <strong>OIDC 대안:</strong> SAML 대신 OIDC 선택 시 Okta에서 <strong>OIDC - OpenID Connect</strong> Web Application으로 생성하고
+            Client ID, Client Secret, Issuer URL만 입력하면 됩니다.
+          </div>
+        </section>
+
+        <section>
+          <h3>SSO 구성 비교</h3>
+          <table>
+            <thead>
+              <tr><th>항목</th><th>IAM Identity Center</th><th>Entra ID</th><th>Okta</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>지원 프로토콜</td><td>SAML 2.0</td><td><strong>OIDC</strong> / SAML 2.0</td><td><strong>OIDC</strong> / SAML 2.0</td></tr>
+              <tr><td>SCIM 지원</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>JIT Provisioning</td><td>O (기본)</td><td>O (기본)</td><td>O (기본)</td></tr>
+              <tr><td>기본 통합 환경</td><td>AWS</td><td>Azure (기본 제공)</td><td>모든 환경 (3rd-party)</td></tr>
+              <tr><td>Conditional Access</td><td>AWS 정책 기반</td><td>Entra CA Policy</td><td>Okta Policy</td></tr>
+              <tr><td>MFA</td><td>IAM IC MFA</td><td>Entra ID MFA</td><td>Okta Verify</td></tr>
+              <tr><td>Account-level SSO</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>Unified Login</td><td>O</td><td>O</td><td>O</td></tr>
+            </tbody>
+          </table>
+          <p class="tiny" style="margin-top: 12px; color: #888;">
+            Unified Login: Account-level SSO를 워크스페이스에 자동 전파 (2023.06.21 이후 계정 기본 활성화)
+          </p>
+        </section>
       </section>
 
       <!-- ============================================================ -->
@@ -879,10 +1678,14 @@ Address: 10.0.1.4  # Private IP로 해석됨</code></pre>
               <td class="smaller">Transit VPC + Frontend Endpoint<br/>Route53 Private Hosted Zone</td>
               <td class="smaller">Transit VNet + Frontend PE<br/>DNS Conditional Forwarding</td>
             </tr>
+            <tr>
+              <td style="color:#fff;">SSO</td>
+              <td class="smaller">IAM Identity Center<br/>SAML + SCIM</td>
+              <td class="smaller">Entra ID (기본 통합)<br/>SAML + SCIM + Conditional Access</td>
+            </tr>
           </tbody>
         </table>
-        <div class="section-divider" style="border-color: #FF3621; margin-top: 30px;"></div>
-        <p class="tiny" style="color: #888;">별도 공유 자료 반영 시 업데이트 예정</p>
+        <p class="tiny" style="color: #888; margin-top: 20px;">Okta는 AWS/Azure 모든 환경에서 3rd-party IdP로 사용 가능</p>
       </section>
 
     </div>
@@ -894,14 +1697,139 @@ Address: 10.0.1.4  # Private IP로 해석됨</code></pre>
     import Notes from 'reveal.js/plugin/notes/notes.esm.js';
     import Zoom from 'reveal.js/plugin/zoom/zoom.esm.js';
 
-    Reveal.initialize({
+    const deck = Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
+      controls: false,
       width: 1280,
       height: 720,
       margin: 0.04,
       transition: 'slide',
       plugins: [Highlight, Notes, Zoom],
+    });
+
+    deck.then(() => {
+      const navItems = document.querySelectorAll('#sidebar .nav-item');
+      const navSubs = document.querySelectorAll('#sidebar .nav-sub');
+      const sectionTitles = document.querySelectorAll('#sidebar .nav-section-title');
+
+      // Click navigation for all nav items
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const h = parseInt(item.dataset.section);
+          const v = parseInt(item.dataset.slide);
+          Reveal.slide(h, v);
+        });
+      });
+
+      // Expand/collapse sub-menus and highlight active items
+      function updateSidebar() {
+        const indices = Reveal.getIndices();
+
+        // Collapse all sub-menus, then open the active one
+        navSubs.forEach(sub => {
+          const parentSection = parseInt(sub.dataset.parentSection);
+          if (parentSection === indices.h) {
+            sub.classList.add('open');
+          } else {
+            sub.classList.remove('open');
+          }
+        });
+
+        // Toggle expanded class on section titles
+        sectionTitles.forEach(title => {
+          const h = parseInt(title.dataset.section);
+          if (h === indices.h) {
+            title.classList.add('expanded');
+          } else {
+            title.classList.remove('expanded');
+          }
+        });
+
+        // Highlight active nav item
+        navItems.forEach(item => {
+          const h = parseInt(item.dataset.section);
+          const v = parseInt(item.dataset.slide);
+          const sectionMatch = indices.h === h;
+          const slideMatch = v === indices.v;
+          const isSectionTitle = item.classList.contains('nav-section-title');
+          const isSubItem = item.classList.contains('nav-sub-item');
+
+          // Find if any sub-item exactly matches current slide
+          const parentSub = item.closest('.nav-sub');
+          let hasExactSubMatch = false;
+          if (!isSubItem && sectionMatch) {
+            const sub = document.querySelector(`.nav-sub[data-parent-section="${h}"]`);
+            if (sub) {
+              hasExactSubMatch = [...sub.querySelectorAll('.nav-sub-item')].some(
+                si => parseInt(si.dataset.slide) === indices.v
+              );
+            }
+          }
+
+          if (isSubItem && sectionMatch && slideMatch) {
+            // Exact sub-item match
+            item.classList.add('active');
+          } else if (isSectionTitle && sectionMatch && v === indices.v) {
+            // Section title slide (v=0) is active
+            item.classList.add('active');
+          } else if (isSectionTitle && sectionMatch && !hasExactSubMatch && !isSubItem) {
+            // Section title highlighted when no sub-item matches
+            item.classList.add('active');
+          } else if (!isSectionTitle && !isSubItem && sectionMatch && slideMatch) {
+            // Top-level items like 개요
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+
+        // Scroll active item into view
+        const activeItem = document.querySelector('#sidebar .nav-item.active');
+        if (activeItem) {
+          activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      }
+
+      // Update prev/next buttons
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      prevBtn.addEventListener('click', () => Reveal.prev());
+      nextBtn.addEventListener('click', () => Reveal.next());
+
+      function updateNavBar() {
+        const isFirst = Reveal.isFirstSlide();
+        const isLast = Reveal.isLastSlide();
+        prevBtn.disabled = isFirst;
+        nextBtn.disabled = isLast;
+      }
+
+      Reveal.on('slidechanged', () => {
+        updateSidebar();
+        updateNavBar();
+      });
+      updateSidebar();
+      updateNavBar();
+
+      // Add copy buttons to all code blocks
+      document.querySelectorAll('.reveal pre code').forEach(block => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = '📋 Copy';
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          navigator.clipboard.writeText(block.textContent).then(() => {
+            btn.textContent = '✓ Copied';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = '📋 Copy';
+              btn.classList.remove('copied');
+            }, 2000);
+          });
+        });
+        block.parentElement.appendChild(btn);
+      });
     });
   </script>
 </body>

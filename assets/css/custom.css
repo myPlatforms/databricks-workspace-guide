@@ -8,6 +8,191 @@
   --db-blue: #00A972;
   --aws-orange: #FF9900;
   --azure-blue: #0078D4;
+  --sidebar-width: 300px;
+  --sso-green: #2E7D32;
+}
+
+/* ===== LEFT SIDEBAR NAVIGATION ===== */
+#sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: var(--db-dark);
+  color: #ccc;
+  z-index: 100;
+  overflow-y: auto;
+  padding: 16px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.3);
+}
+
+#sidebar .sidebar-title {
+  padding: 12px 16px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ccc;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+#sidebar .sidebar-logo {
+  display: block;
+  width: 140px;
+  margin-bottom: 8px;
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+#sidebar .nav-group {
+  margin-bottom: 4px;
+}
+
+#sidebar .nav-group-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  cursor: default;
+  user-select: none;
+}
+
+#sidebar .nav-group-header .group-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  margin-right: 8px;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+#sidebar .nav-group-header .group-icon.sso {
+  background: var(--sso-green);
+  color: #fff;
+}
+
+#sidebar .nav-group-header .group-icon-img {
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+#sidebar .nav-item {
+  display: block;
+  padding: 7px 16px 7px 42px;
+  font-size: 16px;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  line-height: 1.4;
+}
+
+/* Section title with expand/collapse arrow */
+#sidebar .nav-section-title {
+  padding-left: 34px;
+  font-weight: 600;
+  color: #ccc;
+  position: relative;
+}
+
+#sidebar .nav-section-title::before {
+  content: '\203A';
+  position: absolute;
+  left: 20px;
+  transition: transform 0.2s;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+#sidebar .nav-section-title.expanded::before {
+  transform: rotate(90deg);
+}
+
+/* Collapsible sub-menu */
+#sidebar .nav-sub {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease-out;
+}
+
+#sidebar .nav-sub.open {
+  max-height: 500px;
+  transition: max-height 0.35s ease-in;
+}
+
+#sidebar .nav-sub-item {
+  padding: 5px 16px 5px 50px;
+  font-size: 15px;
+  color: #888;
+  border-left: 3px solid transparent;
+}
+
+#sidebar .nav-item:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+#sidebar .nav-item.active {
+  background: rgba(255,54,33,0.15);
+  color: #fff;
+  border-left-color: var(--db-red);
+  font-weight: 600;
+}
+
+#sidebar .nav-sub-item.active {
+  font-weight: 500;
+  color: #fff;
+  background: rgba(255,54,33,0.1);
+  border-left-color: var(--db-red);
+}
+
+#sidebar .sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 12px;
+  font-size: 10px;
+  color: #666;
+}
+
+/* Top-level nav item (개요) */
+#sidebar .nav-item-top {
+  padding-left: 16px;
+  font-weight: 600;
+  color: #ccc;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 4px;
+  padding-bottom: 10px;
+}
+
+/* Shift reveal.js to the right */
+.reveal {
+  margin-left: var(--sidebar-width) !important;
+  width: calc(100% - var(--sidebar-width)) !important;
+}
+
+/* Fix overview (ESC) mode centering */
+.reveal.overview .slides {
+  transform-origin: left top !important;
+}
+
+.reveal.overview {
+  /* Ensure the overview grid doesn't overflow */
+  overflow: auto !important;
 }
 
 /* Section title slides */
@@ -21,7 +206,9 @@
 
 /* CSP badges */
 .csp-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 16px;
   border-radius: 4px;
   font-size: 0.7em;
@@ -31,13 +218,31 @@
 }
 
 .csp-badge.aws {
-  background: var(--aws-orange);
-  color: #000;
+  background: transparent;
+  color: transparent;
+  padding: 0;
+  font-size: 0;
+  width: 60px;
+  height: 36px;
+  background-image: url('../icons/aws/aws-logo.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  vertical-align: middle;
 }
 
 .csp-badge.azure {
-  background: var(--azure-blue);
-  color: #fff;
+  background: transparent;
+  color: transparent;
+  padding: 0;
+  font-size: 0;
+  width: 40px;
+  height: 36px;
+  background-image: url('../icons/azure/azure-logo.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  vertical-align: middle;
 }
 
 /* Architecture diagrams */
@@ -206,10 +411,15 @@
   border-left-color: var(--aws-orange);
 }
 
-/* Smaller text utility */
+/* Smaller text utility - use rem-like scaling to prevent compounding */
 .small { font-size: 0.7em; }
 .smaller { font-size: 0.6em; }
 .tiny { font-size: 0.5em; }
+
+/* Prevent double-shrinking when tiny/smaller is nested inside small */
+.small .tiny { font-size: 0.7em; }
+.small .smaller { font-size: 0.85em; }
+.smaller .tiny { font-size: 0.8em; }
 
 /* Left-aligned content */
 .left-aligned {
@@ -218,6 +428,107 @@
 
 .left-aligned h3 {
   text-align: left;
+}
+
+/* Prev/Next navigation bar */
+.slide-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  height: 48px;
+  background: #f8f8f8;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 50;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.slide-nav-bar button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.slide-nav-bar button:hover {
+  background: var(--db-dark);
+  color: #fff;
+  border-color: var(--db-dark);
+}
+
+.slide-nav-bar button:disabled {
+  opacity: 0.3;
+  cursor: default;
+  background: #f0f0f0;
+}
+
+.slide-nav-bar button:disabled:hover {
+  background: #f0f0f0;
+  color: #333;
+  border-color: #ccc;
+}
+
+.slide-nav-bar .nav-label {
+  font-size: 12px;
+  color: #888;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Push reveal.js content up to make room for nav bar */
+.reveal .slides {
+  margin-bottom: 24px !important;
+}
+
+/* Code copy button */
+.reveal pre {
+  position: relative;
+}
+
+.reveal pre .copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #333;
+  z-index: 10;
+}
+
+.reveal pre:hover .copy-btn {
+  opacity: 1;
+}
+
+.reveal pre .copy-btn:hover {
+  background: var(--db-dark);
+  color: #fff;
+  border-color: var(--db-dark);
+}
+
+.reveal pre .copy-btn.copied {
+  background: var(--sso-green);
+  color: #fff;
+  border-color: var(--sso-green);
+  opacity: 1;
 }
 
 /* Vertical slides separator */
